@@ -11,15 +11,19 @@ public class InsertionMutation implements IMutation {
         MersenneTwisterFast randomGenerator = new MersenneTwisterFast();
         int selectionPoint = randomGenerator.nextInt(tour.getSize());
 
-        ArrayList<City> cities = tour.getCities();
-        City target = cities.remove(selectionPoint);
-        int insertionPoint;
-        do{
-            insertionPoint = randomGenerator.nextInt(cities.size());
-        } while(insertionPoint == selectionPoint);
-        cities.add(insertionPoint, target);
+        if(randomGenerator.nextBoolean(1.0)){ //TODO
+            ArrayList<City> cities = tour.getCities();
+            City target = cities.remove(selectionPoint);
+            int insertionPoint;
+            do{
+                insertionPoint = randomGenerator.nextInt(cities.size());
+            } while(insertionPoint == selectionPoint);
+            cities.add(insertionPoint, target);
 
-        tour.setCities(cities);
+            tour.setCities(cities);
+            System.out.println(tour.getCities().toString());
+        }
+
 
         return tour;
     }
