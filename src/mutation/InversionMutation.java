@@ -2,6 +2,7 @@ package mutation;
 
 import base.City;
 import base.Tour;
+import main.Scenario;
 import random.MersenneTwisterFast;
 
 import java.util.ArrayList;
@@ -10,8 +11,9 @@ import java.util.Collections;
 public class InversionMutation implements IMutation {
     public Tour doMutation(Tour tour) {
         MersenneTwisterFast random = new MersenneTwisterFast();
+        Scenario scenario = new Scenario();                     //TODO is this correct?
 
-        if(random.nextBoolean(1.0)) { //TODO
+        if(random.nextBoolean(scenario.getMutationRatio())) {
             int arrayLength = tour.getSize();
             int random1 = random.nextInt(0,arrayLength);
             int random2 = random.nextInt(0,arrayLength);
