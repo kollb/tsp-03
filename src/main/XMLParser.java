@@ -15,7 +15,7 @@ import javax.xml.stream.events.Attribute;
 
 public class XMLParser {
 
-    List<Scenario> scenarioList = new ArrayList<Scenario>();
+    private List<Scenario> scenarioList = new ArrayList<Scenario>();
 
     public XMLParser(File xmlFile) {
         XMLInputFactory read = XMLInputFactory.newInstance();

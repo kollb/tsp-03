@@ -75,6 +75,14 @@ public enum HSQLDBManager {
         sqlStringBuilder.append("maximumnumberofevaluations VARCHAR(20) NOT NULL");
         sqlStringBuilder.append(" )");
         update(sqlStringBuilder.toString());
+
+        sqlStringBuilder.append("CREATE TABLE iterations ").append(" ( ");
+        sqlStringBuilder.append("id VARCHAR(20) NOT NULL").append(",");
+        sqlStringBuilder.append("scenario VARCHAR(20) NOT NULL").append(",");
+        sqlStringBuilder.append("iterationid  VARCHAR(20) NOT NULL").append(",");
+        sqlStringBuilder.append("fitnessvalue VARCHAR(20) NOT NULL").append(",");
+        sqlStringBuilder.append(" )");
+        update(sqlStringBuilder.toString());
     }
 
     public void addScenario(String scenarioId, String selectionType, String crossoverType, String mutationType, double crossoverProbability, double mutationProbability) {
@@ -85,6 +93,15 @@ public enum HSQLDBManager {
                 "'" + mutationType + "'," +
                 crossoverProbability + "," +
                 mutationProbability + ");";
+        update(statement);
+    }
+
+    public void addFitnesstoScenario(String id, String scenario, int iterationid, int fitnessvalue) {
+        String statement = "INSERT INTO iterations(id, scenario, iterationid, fitnessvalue) VALUES (" +
+                "'" + id + "'," +
+                "'" + scenario + "'," +
+                "'" + iterationid + "'," +
+                "'" + fitnessvalue + ");";
         update(statement);
     }
 
