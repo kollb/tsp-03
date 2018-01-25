@@ -60,32 +60,6 @@ public enum HSQLDBManager {
         sqlStringBuilder.append("PRIMARY KEY (id)");
         sqlStringBuilder.append(" )");
         update(sqlStringBuilder.toString());
-
-        sqlStringBuilder.append("CREATE TABLE scenarios ").append(" ( ");
-        sqlStringBuilder.append("id VARCHAR(20) NOT NULL").append(",");
-        sqlStringBuilder.append("crossovertype VARCHAR(20) NOT NULL").append(",");
-        sqlStringBuilder.append("crossoverratio FLOAT(1,4) NOT NULL").append(",");
-        sqlStringBuilder.append("mutationtype  VARCHAR(20) NOT NULL").append(",");
-        sqlStringBuilder.append("mutationratio FLOAT(1,4) NOT NULL").append(",");
-        sqlStringBuilder.append("selection VARCHAR(20) NOT NULL").append(",");
-        sqlStringBuilder.append("buildstatistics VARCHAR(20) NOT NULL").append(",");
-        sqlStringBuilder.append("isevaluated VARCHAR(20) NOT NULL").append(",");
-        sqlStringBuilder.append("evaluation VARCHAR(20) NOT NULL").append(",");
-        sqlStringBuilder.append("maximumnumberofevaluations VARCHAR(20) NOT NULL");
-        sqlStringBuilder.append("maximumnumberofevaluations VARCHAR(20) NOT NULL");
-        sqlStringBuilder.append(" )");
-        update(sqlStringBuilder.toString());
-    }
-
-    public void addScenario(String scenarioId, String selectionType, String crossoverType, String mutationType, double crossoverProbability, double mutationProbability) {
-        String statement = "INSERT INTO scenarios(id, selectionType, crossoverType, mutationType, crossoverProbability, mutationProbability) VALUES (" +
-                "'" + scenarioId + "'," +
-                "'" + selectionType + "'," +
-                "'" + crossoverType + "'," +
-                "'" + mutationType + "'," +
-                crossoverProbability + "," +
-                mutationProbability + ");";
-        update(statement);
     }
 
     public String buildSQLStatement(long id,String test) {

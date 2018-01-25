@@ -2,10 +2,45 @@ package selection;
 
 import base.Population;
 import base.Tour;
+import main.Configuration;
+
+import java.util.ArrayList;
 
 public class TournamentSelection implements ISelection {
-    public Tour doSelection(Population population) {
-        return null;
+    public ArrayList<Tour> doSelection(Population population) {
+
+        ArrayList<Tour> result = new ArrayList<>();
+        ArrayList<Tour> selected = new ArrayList<>();
+
+        int size = Configuration.instance.TOURNAMENT_SELECT_COUNT * 2;
+
+        if (size > population.getTours().size()) {
+            size = population.getTours().size();
+
+            if (size %2 == 1) {
+                size--;
+            }
+        }
+
+        for (int i = 0; i < size;) {
+            Tour select = population.getTours().get(Configuration.instance.random
+                    .nextInt(population.getTours().size()));
+
+            if (!result.contains(select)) {
+                selected.add(select);
+                i++;
+            }
+        }
+
+        for (int i = 0; i < selected.size(); i+= 2) {
+            if (selected.get(i).getFitness() < selected.get(i+1).getFitness()) {
+                result.add(selected.get(i));
+            } else {
+                result.add(selected.get(i+1));
+            }
+        }
+
+        return result;
     }
 
     public String toString() {
