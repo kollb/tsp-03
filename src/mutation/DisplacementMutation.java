@@ -20,7 +20,7 @@ public class DisplacementMutation implements IMutation {
         ArrayList<City> cities = tour.getCities();
         ArrayList<City> displaced = new ArrayList<City>();
         for(int i = startPoint; i <= endPoint; i++) {
-            displaced.add(cities.remove(i));
+            displaced.add(cities.remove(startPoint));
         }
         int insertionPoint;
         do{
