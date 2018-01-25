@@ -1,0 +1,37 @@
+<!--- crossover [ Cycle | Heuristic | Ordered | PartiallyMatched | PositionBased | SubTourExchange ]
+      crossoverRatio <double>
+      mutation [ Displacement | Exchange | Heuristic | Insertion | Inversion ]	
+      mutationRatio <double>
+      selection [ RouletteWheel | Tournament ]
+	  buildStatistics [ no | yes ]
+      isEvaluated [ no | yes ]
+	  evaluation [ BruteForce | MonteCarlo ]
+	  maximumNumberOfEvaluations <integer>
+-->
+
+<?xml version="1.0"?>
+<configuration>
+ <scenario id="s01">
+  <crossover>PartiallyMatched</crossover>
+  <crossoverRatio>0.7</crossoverRatio>
+  <mutation>Exchange</mutation>
+  <mutationRatio>0.0005</mutationRatio>
+  <selection>RouletteWheel</selection>
+  <buildStatistics>yes</buildStatistics>
+  <isEvaluated>yes</isEvaluated>
+  <evaluation>BruteForce</evaluation>
+  <maximumNumberOfEvaluations>1000000000</maximumNumberOfEvaluations>
+ </scenario>
+ 
+  <scenario id="s02">
+  <crossover>PartiallyMatched</crossover>
+  <crossoverRatio>0.6</crossoverRatio>
+  <mutation>Exchange</mutation>
+  <mutationRatio>0.0001</mutationRatio>
+  <selection>RouletteWheel</selection>
+  <buildStatistics>yes</buildStatistics>
+  <isEvaluated>yes</isEvaluated>
+  <evaluation>RouletteWheel</evaluation>
+  <maximumNumberOfEvaluations>1000000000</maximumNumberOfEvaluations>
+ </scenario>
+</configuration>
