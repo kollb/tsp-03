@@ -72,19 +72,39 @@ public enum HSQLDBManager {
         sqlStringBuilder.append("isevaluated VARCHAR(20) NOT NULL").append(",");
         sqlStringBuilder.append("evaluation VARCHAR(20) NOT NULL").append(",");
         sqlStringBuilder.append("maximumnumberofevaluations VARCHAR(20) NOT NULL");
-        sqlStringBuilder.append("maximumnumberofevaluations VARCHAR(20) NOT NULL");
+        sqlStringBuilder.append(" )");
+        update(sqlStringBuilder.toString());
+
+        sqlStringBuilder.append("CREATE TABLE iteration ").append(" ( ");
+        sqlStringBuilder.append("id VARCHAR(20) NOT NULL").append(",");
+        sqlStringBuilder.append("scenario VARCHAR(20) NOT NULL").append(",");
+        sqlStringBuilder.append("iterationid VARCHAR(20) NOT NULL").append(",");
+        sqlStringBuilder.append("fitness  VARCHAR(20) NOT NULL");
         sqlStringBuilder.append(" )");
         update(sqlStringBuilder.toString());
     }
 
-    public void addScenario(String scenarioId, String selectionType, String crossoverType, String mutationType, double crossoverProbability, double mutationProbability) {
+    public void addScenario(String id, String selectionType, String crossoverType, double crossoverratio,String mutationType,double mutationratio, boolean buildstatistics ,boolean isEvaluated,long maximumnumberofevaluations, double mutationProbability) {
         String statement = "INSERT INTO scenarios(id, selectionType, crossoverType, mutationType, crossoverProbability, mutationProbability) VALUES (" +
-                "'" + scenarioId + "'," +
-                "'" + selectionType + "'," +
+                "'" + id + "'," +
                 "'" + crossoverType + "'," +
+                "'" + crossoverratio + "'," +
                 "'" + mutationType + "'," +
-                crossoverProbability + "," +
+                "'" + mutationratio + "'," +
+                "'" + selectionType + "'," +
+                "'" + buildstatistics + "'," +
+                "'" + isEvaluated + "'," +
+                "'" + maximumnumberofevaluations + "," +
                 mutationProbability + ");";
+        update(statement);
+    }
+
+    public void addFitnessInIteration(String id,String scenario,String iterationid,int fitness){
+        String statement = "INSERT INTO iteration(id, scenario, iterationid, fitness) VALUES (" +
+                "'" + id + "'," +
+                "'" + scenario + "'," +
+                "'" + iterationid + "'," +
+                "'" + fitness + ");";
         update(statement);
     }
 
