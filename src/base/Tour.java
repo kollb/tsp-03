@@ -36,7 +36,7 @@ public class Tour implements Comparable<Tour> {
     public double getFitness() {
         double distance = 0.0;
 
-        for (int i = 0; i < cities.size(); i++) {
+        for (int i = 0;i < cities.size();i++) {
             double x1 = getCity(i).getX();
             double y1 = getCity(i).getY();
             double x2 = getCity((i+1) % cities.size()).getX();
