@@ -1,5 +1,6 @@
 package bruteforce;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,8 +30,9 @@ public class BruteForce {
     }
     */
 
-    public void createPermutations(ArrayList<City> cityList, long permutationsNumber){
-        HashSet<Tour> tours=new HashSet<>();
+public void createPermutations(ArrayList<City> cityList, long permutationsNumber){
+        HashSet<Tour> tours=new HashSet<Tour>();
+        ArrayList<Tour> PopulationTours=new ArrayList<Tour>();
 
         for(int i=0;i<permutationsNumber;i++){
             int counter=0;
@@ -39,7 +41,10 @@ public class BruteForce {
                 counter++;
             }
         }
-        this.population.setTours(tours);
+        for(Tour tour:tours){
+            PopulationTours.add(tour);
+        }
+        this.population.setTours(PopulationTours);
     }
 
     public Tour generateTour(ArrayList<City> cityArrayList){
@@ -63,7 +68,7 @@ public class BruteForce {
     }
 
     public int getPopulationSizeQuarter(){
-        HashSet<Tour> populationTours=population.getTours();
+        ArrayList<Tour> populationTours=population.getTours();
 
         int index=populationTours.size()/4;
 
@@ -73,7 +78,7 @@ public class BruteForce {
     public double getFitnessAll(){
         double populationFitness=0;
 
-        HashSet<Tour> populationTours=population.getTours();
+        ArrayList<Tour> populationTours=population.getTours();
 
         for(Tour tour : populationTours){
             populationFitness=populationFitness+tour.getFitness();
@@ -86,7 +91,7 @@ public class BruteForce {
         double populationFitness=0;
 
 
-        HashSet<Tour> populationTours=population.getTours();
+        ArrayList<Tour> populationTours=population.getTours();
         int quarter=getPopulationSizeQuarter();
 
         for(Tour tour:populationTours){
@@ -103,7 +108,7 @@ public class BruteForce {
     public double getFitnessLast25(){
         double populationFitness=0;
 
-        HashSet<Tour> populationTours=population.getTours();
+        ArrayList<Tour> populationTours=population.getTours();
         int quarter=getPopulationSizeQuarter();
 
         for(Tour tour:populationTours){
@@ -120,7 +125,7 @@ public class BruteForce {
     public double getFitnessMid50(){
         double populationFitness=0;
 
-        HashSet<Tour> populationTours=population.getTours();
+        ArrayList<Tour> populationTours=population.getTours();
         int quarter=getPopulationSizeQuarter();
 
         for(Tour tour:populationTours){
