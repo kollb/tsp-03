@@ -404,6 +404,7 @@ public class Statistics implements IStatistics {
                 for (int i = 0; i < (scenarios.length - 1); i++) {
                     strMean = strMean + "mean(s" + scenarios[i] + "),";
                 }
+                // TODO: strMean is not used! Probably a bug.
                 strMean = strMean + "mean(s" + scenarios[scenarios.length - 1] + "))";
             }
 
