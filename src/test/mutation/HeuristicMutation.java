@@ -54,7 +54,7 @@ public class HeuristicMutation {
     @Test
     public void checkElements() {
         ArrayList<Tour> result = mutation.doMutation(tours);
-        assertTrue(result.remove(0).getCities().containsAll(tour.getCities()) && tour.getCities().containsAll(result.remove(0).getCities()));
+        assertTrue(result.get(0).getCities().containsAll(tour.getCities()) && tour.getCities().containsAll(result.remove(0).getCities()));
     }
 
     @Test
