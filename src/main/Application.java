@@ -1,5 +1,6 @@
 package main;
 
+import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import base.City;
@@ -54,9 +55,25 @@ public class Application {
         System.out.println();
     }
 
-    public void initConfiguration() {
+    public Scenario[] initConfiguration() {
         System.out.println("--- GeneticAlgorithm.initConfiguration()");
         System.out.println();
+        Scenario[] scenarios = null;
+        try {
+            scenarios = new XMLParser(new File("configuration/genetic_algorithm_tsp.xml")).getScenarios();
+
+            if (scenarios == null){
+                throw new Exception();
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+            System.out.println("Szenario-Datei nicht gefunden");
+            System.exit(1);
+        }
+        System.out.println("Es wurden "+ scenarios.length+" Szenarien geladen. ");
+        HSQLDBManager.instance.insert("Test");
+        HSQLDBManager.instance.checkTable();
+        return scenarios;
     }
 
     public void execute() {
