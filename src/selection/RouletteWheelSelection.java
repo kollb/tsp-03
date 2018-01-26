@@ -8,16 +8,19 @@ import java.util.*;
 
 public class RouletteWheelSelection implements ISelection {
 
+    private SortedMap<Double, Tour> probabilityTourMap;
+
     public ArrayList<Tour> doSelection(Population population) throws PopulationTooSmallException {
 
         if (population.getTours().size() < Configuration.instance.ROULETTE_WHEEL_SELECT_COUNT) {
             throw new PopulationTooSmallException();
         }
 
+        probabilityTourMap = calculateProbabilityTourMap(population);
         ArrayList<Tour> result = new ArrayList<>();
 
         for (int i = 0; i < Configuration.instance.ROULETTE_WHEEL_SELECT_COUNT;) {
-            Tour select = doSingleSelection(population);
+            Tour select = doSingleSelection();
 
             if (!result.contains(select)) {
                 result.add(select);
@@ -28,10 +31,10 @@ public class RouletteWheelSelection implements ISelection {
         return result;
     }
 
-    public Tour doSingleSelection(Population population) {
+    public Tour doSingleSelection() {
         double chance = Configuration.instance.random.nextDouble();
 
-        SortedMap<Double, Tour> probabilityMap = getProbabilityTourMap(population);
+        SortedMap<Double, Tour> probabilityMap = probabilityTourMap;
         for (double key : probabilityMap.keySet()) {
             if (chance <= key) {
                 return probabilityMap.get(key);
@@ -54,7 +57,7 @@ public class RouletteWheelSelection implements ISelection {
         return fitnessSum;
     }
 
-    private static SortedMap<Double, Tour> getProbabilityTourMap(Population population) {
+    private SortedMap<Double, Tour> calculateProbabilityTourMap(Population population) {
         final double fitnessSum = getFitnessSum(population);
         SortedMap<Double, Tour> tourMap = new TreeMap<>();
 
