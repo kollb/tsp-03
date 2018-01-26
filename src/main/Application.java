@@ -4,6 +4,7 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import base.City;
+import crossover.CycleCrossover;
 import crossover.ICrossover;
 import data.HSQLDBManager;
 import data.InstanceReader;
