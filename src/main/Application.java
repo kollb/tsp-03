@@ -1,23 +1,22 @@
 package main;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
 import base.City;
-import base.Tour;
 import base.Population;
-import java.io.File;
-import java.util.HashSet;
-
+import base.Tour;
+import bruteforce.BruteForce;
 import crossover.*;
 import data.HSQLDBManager;
 import data.InstanceReader;
 import data.TSPLIBReader;
 import mutation.*;
 import selection.ISelection;
-import bruteforce.BruteForce;
 import selection.PopulationTooSmallException;
 import selection.RouletteWheelSelection;
 import selection.TournamentSelection;
+
+import java.io.File;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 
 public class Application {
     private static ArrayList<City> availableCities;
@@ -73,75 +72,100 @@ public class Application {
         try {
             scenarios = new XMLParser(new File("configuration/genetic_algorithm_tsp.xml")).getScenarios();
 
-            if (scenarios == null){
+            if (scenarios == null) {
                 throw new Exception();
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Szenario-Datei nicht gefunden");
             System.exit(1);
         }
-        System.out.println("Es wurden "+ scenarios.length+" Szenarien geladen. ");
+        System.out.println("Es wurden " + scenarios.length + " Szenarien geladen. ");
         return scenarios;
     }
 
     public void execute(Scenario[] scenarios, Population population) {
-        for(Scenario scenario:scenarios){
+        for (Scenario scenario : scenarios) {
 
-            switch (scenario.getSelection()){
-                case TOURNAMENT: selection=new TournamentSelection(); break;
-                case ROULETTE_WHEEL: selection=new RouletteWheelSelection(); break;
+            switch (scenario.getSelection()) {
+                case TOURNAMENT:
+                    selection = new TournamentSelection();
+                    break;
+                case ROULETTE_WHEEL:
+                    selection = new RouletteWheelSelection();
+                    break;
             }
-            switch (scenario.getCrossover()){
-                case CYCLE: crossover=new CycleCrossover(); break;
-                case ORDERED: crossover=new OrderedCrossover(); break;
-                case POSITION: crossover=new PositionBasedCrossover(); break;
-                case HEURISTIC: crossover=new HeuristicCrossover(); break;
-                case PARTIALLY_MATCHED: crossover=new PartiallyMatchedCrossover(); break;
-                case SUB_TOUR_EXCHANGE: crossover=new SubTourExchangeCrossover(); break;
+            switch (scenario.getCrossover()) {
+                case CYCLE:
+                    crossover = new CycleCrossover();
+                    break;
+                case ORDERED:
+                    crossover = new OrderedCrossover();
+                    break;
+                case POSITION:
+                    crossover = new PositionBasedCrossover();
+                    break;
+                case HEURISTIC:
+                    crossover = new HeuristicCrossover();
+                    break;
+                case PARTIALLY_MATCHED:
+                    crossover = new PartiallyMatchedCrossover();
+                    break;
+                case SUB_TOUR_EXCHANGE:
+                    crossover = new SubTourExchangeCrossover();
+                    break;
             }
-            switch (scenario.getMutation()){
-                case HEURISTIC: mutation=new HeuristicMutation(); break;
-                case DISPLACEMENT: mutation=new DisplacementMutation(); break;
-                case EXCHANGE: mutation=new ExchangeMutation(); break;
-                case INSERTION: mutation=new InsertionMutation(); break;
-                case INVERSION: mutation=new InversionMutation(); break;
+            switch (scenario.getMutation()) {
+                case HEURISTIC:
+                    mutation = new HeuristicMutation();
+                    break;
+                case DISPLACEMENT:
+                    mutation = new DisplacementMutation();
+                    break;
+                case EXCHANGE:
+                    mutation = new ExchangeMutation();
+                    break;
+                case INSERTION:
+                    mutation = new InsertionMutation();
+                    break;
+                case INVERSION:
+                    mutation = new InversionMutation();
+                    break;
             }
 
 
-
-            double result=100;
-            for(int i=0;i<100;i++){
+            double result = 100;
+            for (int i = 0; i < 100; i++) {
                 //if(gosForward(result)&&isSolutionQualityReached(result)){
-                    ArrayList<Tour> newPopulation=new ArrayList<Tour>();
-                    ArrayList<Tour> parents=new ArrayList<Tour>();
+                ArrayList<Tour> newPopulation;
+                ArrayList<Tour> parents;
 
-                    newPopulation=population.getTours();
+                newPopulation = population.getTours();
 
-                    try {
-                        System.out.println(scenario.getSelection());
-                        parents=selection.doSelection(population);
-                        for(int j=1;j<26;j=j+2){
-                            Tour child1=crossover.doCrossover(parents.get(j),parents.get(j-1));
-                            Tour child2=crossover.doCrossover(parents.get(j),parents.get(j-1));
-                            System.out.println("JUSTUS");
-                            newPopulation.add(child1);
-                            newPopulation.add(child2);
-                            System.out.println("JUSTUuuuuuuuuuuuuuuS");
-                        }
-
-                        newPopulation=mutation.doMutation(newPopulation);
-
-                        population.setTours(newPopulation);
-                        result=getFitnessAll(population);
-
-                        HSQLDBManager.instance.addFitnessToScenario(scenario.getId(),i, result);
-
-                        System.out.println(scenario.getId()+", "+i+", "+result);
-
-                    } catch (PopulationTooSmallException e) {
-                        e.printStackTrace();
+                try {
+                    System.out.println(scenario.getSelection());
+                    parents = selection.doSelection(population);
+                    for (int j = 1; j < 26; j = j + 2) {
+                        Tour child1 = crossover.doCrossover(parents.get(j), parents.get(j - 1));
+                        Tour child2 = crossover.doCrossover(parents.get(j), parents.get(j - 1));
+                        System.out.println("JUSTUS");
+                        newPopulation.add(child1);
+                        newPopulation.add(child2);
+                        System.out.println("JUSTUuuuuuuuuuuuuuuS");
                     }
+
+                    newPopulation = mutation.doMutation(newPopulation);
+
+                    population.setTours(newPopulation);
+                    result = getFitnessAll(population);
+
+                    HSQLDBManager.instance.addFitnessToScenario(scenario.getId(), i, result);
+
+                    System.out.println(scenario.getId() + ", " + i + ", " + result);
+
+                } catch (PopulationTooSmallException e) {
+                    e.printStackTrace();
+                }
                 //}
 
             }
@@ -165,27 +189,27 @@ public class Application {
         return (quality * 0.95) <= 2579;
     }
 
-    public double getFitnessAll(Population population){
-        double populationFitness=0;
+    public double getFitnessAll(Population population) {
+        double populationFitness = 0;
 
-        ArrayList<Tour> populationTours=population.getTours();
+        ArrayList<Tour> populationTours = population.getTours();
 
-        for(Tour tour : populationTours){
-            populationFitness=populationFitness+tour.getFitness();
+        for (Tour tour : populationTours) {
+            populationFitness = populationFitness + tour.getFitness();
         }
 
         return populationFitness;
     }
 
     public static void main(String... args) {
-        long permutationsNumber=Long.parseUnsignedLong("280");
+        long permutationsNumber = Long.parseUnsignedLong("280");
         Application application = new Application();
         application.startupHSQLDB();
         application.loadData();
-        BruteForce bruteForce=new BruteForce();
-        Population population=bruteForce.createPermutations(availableCities,permutationsNumber);
-        Scenario[] scenarios=application.initConfiguration();
-        application.execute(scenarios,population);
+        BruteForce bruteForce = new BruteForce();
+        Population population = bruteForce.createPermutations(availableCities, permutationsNumber);
+        Scenario[] scenarios = application.initConfiguration();
+        application.execute(scenarios, population);
         application.shutdownHSQLDB();
     }
 }

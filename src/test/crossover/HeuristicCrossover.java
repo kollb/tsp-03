@@ -5,14 +5,12 @@ import base.Tour;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class HeuristicCrossover {
 
     crossover.HeuristicCrossover hc;
-    Tour tour1,tour2,child;
+    Tour tour1, tour2, child;
 
     @Before
     public void init() {
@@ -28,16 +26,16 @@ public class HeuristicCrossover {
             tour2.addCity(tour1.getCity(i));
         }
 
-        child = hc.doCrossover(tour1,tour2);
+        child = hc.doCrossover(tour1, tour2);
     }
 
     @Test
-    public void testNotNull(){
+    public void testNotNull() {
         assertNotNull(child);
     }
 
     @Test
-    public void testLength(){
+    public void testLength() {
         assertEquals(280, child.getSize());
     }
 

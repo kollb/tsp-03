@@ -7,14 +7,13 @@ import main.Scenario;
 import random.MersenneTwisterFast;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class ExchangeMutation implements IMutation {
     public ArrayList<Tour> doMutation(ArrayList<Tour> tours) {
         MersenneTwisterFast randomGenerator = (MersenneTwisterFast) Configuration.instance.random;
         Scenario scenario = new Scenario();
 
-        for(Tour tour:tours) {
+        for (Tour tour : tours) {
             if (randomGenerator.nextBoolean(scenario.getMutationRatio())) { //TODO ist das so richtig?
                 int arrayLength = tour.getSize();
                 int random1 = randomGenerator.nextInt(0, arrayLength);
