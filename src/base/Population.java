@@ -9,6 +9,10 @@ public class Population {
         return tours;
     }
 
+    public Population() {
+        this.tours = new ArrayList<>();
+    }
+
     public Population addTour(Tour tour){
         tours.add(tour);
         return this;
