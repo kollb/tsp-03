@@ -9,6 +9,7 @@ import statistics.Statistics;
 import com.sun.org.apache.xpath.internal.SourceTree;
 import main.Configuration;
 import main.Scenario;
+import statistics.Statistics;
 
 public enum HSQLDBManager {
     instance;
@@ -94,6 +95,7 @@ public enum HSQLDBManager {
     }
 
     public void writeCsv(String scenarioId){
+        Statistics stat = new Statistics();
         StringBuilder sqlStringBuilder = new StringBuilder();
         sqlStringBuilder.append("SELECT * FROM iterations WHERE id='");
         sqlStringBuilder.append(scenarioId).append("'");
@@ -114,8 +116,9 @@ public enum HSQLDBManager {
                     output[j] = result.getDouble(j + 1);
                     System.out.println("SQL Table iteration: " + output[j]);
                 }
-                //writeCsv(scenarioId,output);
+
             }
+            stat.writeCSVFile(scenarioId,output);
         } catch (SQLException e) {
             e.printStackTrace();
         }
