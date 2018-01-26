@@ -1,6 +1,5 @@
 package bruteforce;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,7 +29,7 @@ public class BruteForce {
     }
     */
 
-public void createPermutations(ArrayList<City> cityList, long permutationsNumber){
+    public Population createPermutations(ArrayList<City> cityList, long permutationsNumber){
         HashSet<Tour> tours=new HashSet<Tour>();
         ArrayList<Tour> PopulationTours=new ArrayList<Tour>();
 
@@ -45,6 +44,8 @@ public void createPermutations(ArrayList<City> cityList, long permutationsNumber
             PopulationTours.add(tour);
         }
         this.population.setTours(PopulationTours);
+
+        return this.population;
     }
 
     public Tour generateTour(ArrayList<City> cityArrayList){
@@ -73,18 +74,6 @@ public void createPermutations(ArrayList<City> cityList, long permutationsNumber
         int index=populationTours.size()/4;
 
         return index;
-    }
-
-    public double getFitnessAll(){
-        double populationFitness=0;
-
-        ArrayList<Tour> populationTours=population.getTours();
-
-        for(Tour tour : populationTours){
-            populationFitness=populationFitness+tour.getFitness();
-        }
-
-        return populationFitness;
     }
 
     public double getFitnessTop25(){
