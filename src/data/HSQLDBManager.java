@@ -1,10 +1,8 @@
 package data;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
+import com.sun.org.apache.xpath.internal.SourceTree;
 import main.Configuration;
 
 public enum HSQLDBManager {
@@ -61,6 +59,7 @@ public enum HSQLDBManager {
         sqlStringBuilder.append(" )");
         update(sqlStringBuilder.toString());
 
+/*
         sqlStringBuilder.append("CREATE TABLE scenarios ").append(" ( ");
         sqlStringBuilder.append("id VARCHAR(20) NOT NULL").append(",");
         sqlStringBuilder.append("crossovertype VARCHAR(20) NOT NULL").append(",");
@@ -72,15 +71,15 @@ public enum HSQLDBManager {
         sqlStringBuilder.append("isevaluated VARCHAR(20) NOT NULL").append(",");
         sqlStringBuilder.append("evaluation VARCHAR(20) NOT NULL").append(",");
         sqlStringBuilder.append("maximumnumberofevaluations VARCHAR(20) NOT NULL");
-        sqlStringBuilder.append("maximumnumberofevaluations VARCHAR(20) NOT NULL");
         sqlStringBuilder.append(" )");
         update(sqlStringBuilder.toString());
+*/
 
         sqlStringBuilder.append("CREATE TABLE iterations ").append(" ( ");
         sqlStringBuilder.append("id VARCHAR(20) NOT NULL").append(",");
         sqlStringBuilder.append("scenario VARCHAR(20) NOT NULL").append(",");
         sqlStringBuilder.append("iterationid  VARCHAR(20) NOT NULL").append(",");
-        sqlStringBuilder.append("fitnessvalue VARCHAR(20) NOT NULL").append(",");
+        sqlStringBuilder.append("fitnessvalue VARCHAR(20) NOT NULL");
         sqlStringBuilder.append(" )");
         update(sqlStringBuilder.toString());
     }
@@ -104,6 +103,25 @@ public enum HSQLDBManager {
                 "'" + fitnessvalue + ");";
         update(statement);
     }
+
+    public void checkTable() {
+        String query = "SELECT id FROM   data;";
+        String[] output = new String[5];
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet result = statement.executeQuery(query);
+            System.out.println(result);
+            while (result.next()) {
+                int i=0;
+                output[i] = result.getArray(i).toString();
+                System.out.println("SQL Table iteration: "+output[i]);
+                i++;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public String buildSQLStatement(long id,String test) {
         StringBuilder stringBuilder = new StringBuilder();
