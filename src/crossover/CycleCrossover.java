@@ -1,12 +1,13 @@
 package crossover;
 
+import base.City;
 import base.Tour;
+import random.MersenneTwisterFast;
 
 public class CycleCrossover implements ICrossover {
-    public Tour doCrossover(Tour tour01,Tour tour02) {
+    public Tour doCrossover(Tour tour1,Tour tour2) {
         if (tour1.getSize() != tour2.getSize())
             return null;    //error!
-
 
         MersenneTwisterFast generator = new MersenneTwisterFast();
         //setup parents and children
