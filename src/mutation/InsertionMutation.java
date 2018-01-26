@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class InsertionMutation implements IMutation {
     @Override
     public ArrayList<Tour> doMutation(ArrayList<Tour> tours) {
-        MersenneTwisterFast randomGenerator =  Configuration.instance.randomForMutation;
+        MersenneTwisterFast randomGenerator = (MersenneTwisterFast) Configuration.instance.random;
         Scenario scenario = new Scenario();     //TODO
 
         for (Tour tour:tours) {
