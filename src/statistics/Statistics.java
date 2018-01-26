@@ -2,12 +2,10 @@ package statistics;
 
 import java.io.*;
 
-//Dateipfade müssen je nach Benutzer individuell angepasst werden
-
 public class Statistics implements IStatistics {
 
-    String globalPath = "src/statistics/";
-    int countScenario = 2;
+    private String globalPath = "O://Software Engineering/01_teil_01/03_implementierung/03_training/02_workspace/_templates/01_tsp/src/statistics/";
+    private int countScenario = 2;
 
     public void writeCSVFile() {
         for(int counter = 1; counter <= countScenario; counter++) {
@@ -143,6 +141,8 @@ public class Statistics implements IStatistics {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            writer.format("setwd(\"" + globalPath + "\")\n" +
+                    "getwd()\n\n");
             writer.format("pdf(\"plots/example_scenario_01.pdf\",height = 10,width = 10,paper = \"A4r\")\n\n");
 
             for(int i = 1; i <= countScenario; i++) {
@@ -154,7 +154,7 @@ public class Statistics implements IStatistics {
             }
 
             String strScenarios = "";
-            for(int i = 1; i <= countScenario; i++) strScenarios = strScenarios + "s" + i;
+            for(int i = 1; i <= countScenario; i++) strScenarios = strScenarios + "s" + i + ",";
             writer.format("barplot(" + strScenarios + "ylim=c(0,100),col=\"black\",ylab = \"solution quality (%%)\",xlab = \"iterations\",width = 0.1,main = \"Genetic Algorithms - TSP280 - Scenario 1\")\n\n");
 
             writer.format("dev.off()");
@@ -169,7 +169,7 @@ public class Statistics implements IStatistics {
             e.printStackTrace();
         }
         writer.format("cat(rep(\"\\n\",64))\n\n" +
-                "setwd(\"O://Software Engineering/01_teil_01/03_implementierung/03_training/02_workspace/_templates/01_tsp/src/statistics\")\n" +
+                "setwd(\"" + globalPath + "\")\n" +
                 "getwd()\n\n");
 
         for(int i = 1; i <= countScenario; i++){
@@ -204,7 +204,7 @@ public class Statistics implements IStatistics {
             e.printStackTrace();
         }
         writer.format("cat(rep(\"\\n\",64))\n\n" +
-                "setwd(\"C://Users/dauberm/Desktop/DHBW/4.Semester/Software Engineering 2/drive-download-20180125T080549Z-001/01_teil_01/03_implementierung/03_training/02_workspace/_templates/01_tsp/src/statistics\")\n" +
+                "setwd(\"" + globalPath + "\")\n" +
                 "getwd()\n\n");
 
         for(int i = 1; i <= countScenario; i++){
@@ -229,7 +229,7 @@ public class Statistics implements IStatistics {
             e.printStackTrace();
         }
         writer.format("cat(rep(\"\\n\",64))\n\n" +
-                "setwd(\"C://Users/dauberm/Desktop/DHBW/4.Semester/Software Engineering 2/drive-download-20180125T080549Z-001/01_teil_01/03_implementierung/03_training/02_workspace/_templates/01_tsp/src/statistics\")\n" +
+                "setwd(\"" + globalPath + "\")\n" +
                 "getwd()\n\n");
 
         for(int i = 1; i <= countScenario; i++){
@@ -255,7 +255,7 @@ public class Statistics implements IStatistics {
             e.printStackTrace();
         }
         writer.format("cat(rep(\"\\n\",64))\n\n" +
-                "setwd(\"C://Users/dauberm/Desktop/DHBW/4.Semester/Software Engineering 2/drive-download-20180125T080549Z-001/01_teil_01/03_implementierung/03_training/02_workspace/_templates/01_tsp/src/statistics\")\n" +
+                "setwd(\"" + globalPath + "\")\n" +
                 "getwd()\n\n");
 
         for(int i = 1; i <= countScenario; i++){
@@ -287,7 +287,7 @@ public class Statistics implements IStatistics {
             e.printStackTrace();
         }
         writer.format("cat(rep(\"\\n\",64))\n\n" +
-                "setwd(\"C://Users/dauberm/Desktop/DHBW/4.Semester/Software Engineering 2/drive-download-20180125T080549Z-001/01_teil_01/03_implementierung/03_training/02_workspace/_templates/01_tsp/src/statistics\")\n" +
+                "setwd(\"" + globalPath + "\")\n" +
                 "getwd()\n\n");
 
         for(int i = 1; i <= countScenario; i++){
@@ -313,7 +313,7 @@ public class Statistics implements IStatistics {
             e.printStackTrace();
         }
         writer.format("cat(rep(\"\\n\",64))\n\n" +
-                "setwd(\"C://Users/dauberm/Desktop/DHBW/4.Semester/Software Engineering 2/drive-download-20180125T080549Z-001/01_teil_01/03_implementierung/03_training/02_workspace/_templates/01_tsp/src/statistics\")\n" +
+                "setwd(\"" + globalPath + "\")\n" +
                 "getwd()\n\n");
 
         for(int i = 1; i <= countScenario; i++){
