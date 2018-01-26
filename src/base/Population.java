@@ -1,17 +1,20 @@
 package base;
 
-
-import java.util.HashSet;
+import java.util.*;
 
 public class Population {
-    private HashSet<Tour> tours;
+    private ArrayList<Tour> tours;
 
-
-    public HashSet<Tour> getTours(){
+    public ArrayList<Tour> getTours(){
         return tours;
     }
 
-    public void setTours(HashSet<Tour> tours){
+    public Population addTour(Tour tour){
+        tours.add(tour);
+        return this;
+    }
+
+    public void setTours(ArrayList<Tour> tours){
         this.tours=tours;
     }
 }
