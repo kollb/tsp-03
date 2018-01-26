@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class OrderedCrossover implements ICrossover {
     public Tour doCrossover(Tour tour1, Tour tour2) {
         if (tour1.getSize() != tour2.getSize()){
-            Error.printSystemOut("Different chromosom length of parents");
+            System.out.println("Different chromosom length of parents");
           return null;
         }
         ArrayList<City> parent1 = (ArrayList<City>) tour1.getCities().clone();
