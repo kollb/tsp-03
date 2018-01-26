@@ -71,6 +71,7 @@ public class Application {
             System.exit(1);
         }
         System.out.println("Es wurden "+ scenarios.length+" Szenarien geladen. ");
+        HSQLDBManager.instance.insert("Test");
         HSQLDBManager.instance.checkTable();
         return scenarios;
     }
