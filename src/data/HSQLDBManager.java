@@ -105,12 +105,11 @@ public enum HSQLDBManager {
     }
 
     public void checkTable() {
-        String query = "SELECT id FROM   data;";
+        String query = "SELECT id FROM data;";
         String[] output = new String[5];
         try {
             Statement statement = connection.createStatement();
             ResultSet result = statement.executeQuery(query);
-            System.out.println(result);
             while (result.next()) {
                 int i=0;
                 output[i] = result.getArray(i).toString();

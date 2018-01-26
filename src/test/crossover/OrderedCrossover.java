@@ -1,26 +1,49 @@
 package test.crossover;
 
 import base.City;
+import org.junit.Before;
 import org.junit.Test;
 import base.Tour;
 
+import java.util.ArrayList;
+
+import static org.junit.Assert.*;
+
 public class OrderedCrossover {
 
-    crossover.OrderedCrossover od = new crossover.OrderedCrossover();
-    @Test
-    public void testOrderCrossover() {
+    crossover.OrderedCrossover oc;
+    Tour tour1,tour2,child;
 
-        Tour tour1 = new Tour();
-        Tour tour2 = new Tour();
+    @Before
+    public void init() {
 
-        for (int i = 1; i < 281; i++){
-            tour1.addCity(new City(i,i,i));
+        oc = new crossover.OrderedCrossover();
+        tour1 = new Tour();
+        tour2 = new Tour();
+
+        for (int i = 1; i < 281; i++) {
+            tour1.addCity(new City(i, i, i));
         }
-        for (int i = 279; i >= 0; i--){
+        for (int i = 279; i >= 0; i--) {
             tour2.addCity(tour1.getCity(i));
         }
-        System.out.println(tour1.toString());
-        System.out.println(tour2.toString());
-        System.out.println(od.doCrossover(tour1, tour2).toString());
-}
+
+        child = oc.doCrossover(tour1,tour2);
+    }
+
+    @Test
+    public void testNotNull(){
+        assertNotNull(child);
+    }
+
+    @Test
+    public void testLength(){
+        assertEquals(280, child.getSize());
+    }
+
+    //this is the only Test needed for Elements, checks for Duplicates, and all if all genes from Parents are existing
+    @Test
+    public void doCrossoverCheckElements() {
+        assertTrue(child.getCities().containsAll(tour1.getCities()) && child.getSize() == tour1.getSize());
+    }
 }
