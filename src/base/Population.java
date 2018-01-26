@@ -11,6 +11,11 @@ public class Population {
         return tours;
     }
 
+    public Population addTour(Tour tour) {
+        tours.add(tour);
+        return this;
+    }
+
     public void setTours(HashSet<Tour> tours){
         this.tours=tours;
     }
