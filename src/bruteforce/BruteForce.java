@@ -1,25 +1,18 @@
 package bruteforce;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 
 import base.Population;
 import base.Tour;
 import base.City;
-import data.InstanceReader;
-import data.TSPLIBReader;
+import main.Configuration;
 import random.MersenneTwisterFast;
 
 public class BruteForce {
-    /*
-    private TSPLIBReader tspReader;
-    private InstanceReader instReader;
-    private ArrayList<Double> resultList;
-    */
 
-    private MersenneTwisterFast mtwister=new MersenneTwisterFast();
+    private MersenneTwisterFast mtwister = (MersenneTwisterFast) Configuration.instance.random;
     private Population population=new Population();
 
     /*
@@ -46,12 +39,12 @@ public class BruteForce {
         this.population.setTours(PopulationTours);
 
         return this.population;
-    }
+        }
+
 
     public Tour generateTour(ArrayList<City> cityArrayList){
 
         Tour newTour=new Tour();
-
         while(!cityArrayList.isEmpty()) {
 
             int random1 = mtwister.nextInt(0, cityArrayList.size()-2);
