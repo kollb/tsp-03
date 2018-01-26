@@ -11,7 +11,7 @@ import java.util.Random;
 
 public class ExchangeMutation implements IMutation {
     public ArrayList<Tour> doMutation(ArrayList<Tour> tours) {
-        MersenneTwisterFast randomGenerator =  Configuration.instance.randomForMutation;
+        MersenneTwisterFast randomGenerator = (MersenneTwisterFast) Configuration.instance.random;
         Scenario scenario = new Scenario();
 
         for(Tour tour:tours) {

@@ -12,7 +12,7 @@ import java.util.Collections;
 public class InversionMutation implements IMutation {
     @Override
     public ArrayList<Tour> doMutation(ArrayList<Tour> tours) {
-        MersenneTwisterFast randomGenerator =  Configuration.instance.randomForMutation;
+        MersenneTwisterFast randomGenerator = (MersenneTwisterFast) Configuration.instance.random;
         Scenario scenario = new Scenario();                     //TODO is this correct?
 
         for(Tour tour:tours) {
