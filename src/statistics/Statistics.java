@@ -50,7 +50,7 @@ public class Statistics implements IStatistics {
             e.printStackTrace();
         }
         writer.format("cat(rep(\"\\n\",64))\n\n" +
-                "setwd(\"O://Software Engineering/01_teil_01/03_implementierung/03_training/02_workspace/_templates/01_tsp/src/statistics\")\n" +
+                "setwd(\"" + globalPath + "\")\n" +
                 "getwd()\n\n");
 
         for(int i = 1; i <= countScenario; i++){
