@@ -85,33 +85,12 @@ public enum HSQLDBManager {
         update(statement);
     }
 
-    public void addFitnessToScenario(String id, String scenario, int iterationid, double fitnessvalue) {
+    public void addFitnessToScenario(String id, int iterationid, double fitnessvalue) {
         String statement = "INSERT INTO iterations(id, iterationid, fitnessvalue) VALUES (" +
                 "'" + id + "'," +
-                "'" + scenario + "'," +
                 "'" + iterationid + "'," +
                 "'" + fitnessvalue + ");";
         update(statement);
-    }
-
-    public void checkTable(){
-        //String query = "INSERT INTO iterations(id, iterationid, fitnessvalue) VALUES ('3','22','3','11');";
-        String query1 = "SELECT * FROM iterations";
-        //update(query);
-        String[] output = new String[4];
-        try {
-            Statement statement = connection.createStatement();
-            ResultSet result = statement.executeQuery(query1);
-            if(result.next()) {
-                for (int j=0;j<4;j++) {
-                    output[j] = result.getString(j+1);
-                    System.out.println("SQL Table iteration: " + output[j]);
-                }
-            writeCsv();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     public void writeCsv(String scenarioId){
@@ -135,9 +114,9 @@ public enum HSQLDBManager {
                     output[j] = result.getDouble(j + 1);
                     System.out.println("SQL Table iteration: " + output[j]);
                 }
-            writeCsv(scenarioId,output);
+                //writeCsv(scenarioId,output);
             }
-            } catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }

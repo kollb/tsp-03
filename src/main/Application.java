@@ -1,20 +1,30 @@
 package main;
 
-import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import base.City;
-import crossover.CycleCrossover;
-import crossover.ICrossover;
+import base.Tour;
+import base.Population;
+import java.io.File;
+import java.util.HashSet;
+
+import crossover.*;
 import data.HSQLDBManager;
 import data.InstanceReader;
 import data.TSPLIBReader;
-import mutation.IMutation;
+import mutation.*;
 import selection.ISelection;
+import bruteforce.BruteForce;
+import selection.PopulationTooSmallException;
+import selection.RouletteWheelSelection;
+import selection.TournamentSelection;
 
 public class Application {
-    private ArrayList<City> availableCities;
+    private static ArrayList<City> availableCities;
     private double[][] distances;
+
+    private double lastResult;
+    private int lastResutCounter = 0;
 
     private ISelection selection;
     private ICrossover crossover;
@@ -72,22 +82,110 @@ public class Application {
             System.exit(1);
         }
         System.out.println("Es wurden "+ scenarios.length+" Szenarien geladen. ");
-        HSQLDBManager.instance.insert("Test");
-        HSQLDBManager.instance.checkTable();
         return scenarios;
     }
 
-    public void execute() {
-        System.out.println("--- GeneticAlgorithm.execute()");
-        HSQLDBManager.instance.insert("hello world");
+    public void execute(Scenario[] scenarios, Population population) {
+        for(Scenario scenario:scenarios){
+
+            switch (scenario.getSelection()){
+                case TOURNAMENT: selection=new TournamentSelection(); break;
+                case ROULETTE_WHEEL: selection=new RouletteWheelSelection(); break;
+            }
+            switch (scenario.getCrossover()){
+                case CYCLE: crossover=new CycleCrossover(); break;
+                case ORDERED: crossover=new OrderedCrossover(); break;
+                case POSITION: crossover=new PositionBasedCrossover(); break;
+                case HEURISTIC: crossover=new HeuristicCrossover(); break;
+                case PARTIALLY_MATCHED: crossover=new PartiallyMatchedCrossover(); break;
+                case SUB_TOUR_EXCHANGE: crossover=new SubTourExchangeCrossover(); break;
+            }
+            switch (scenario.getMutation()){
+                case HEURISTIC: mutation=new HeuristicMutation(); break;
+                case DISPLACEMENT: mutation=new DisplacementMutation(); break;
+                case EXCHANGE: mutation=new ExchangeMutation(); break;
+                case INSERTION: mutation=new InsertionMutation(); break;
+                case INVERSION: mutation=new InversionMutation(); break;
+            }
+
+
+
+            double result=100;
+            for(int i=0;i<100;i++){
+                //if(gosForward(result)&&isSolutionQualityReached(result)){
+                    ArrayList<Tour> newPopulation=new ArrayList<Tour>();
+                    ArrayList<Tour> parents=new ArrayList<Tour>();
+
+                    newPopulation=population.getTours();
+
+                    try {
+                        System.out.println(scenario.getSelection());
+                        parents=selection.doSelection(population);
+                        for(int j=1;j<26;j=j+2){
+                            Tour child1=crossover.doCrossover(parents.get(j),parents.get(j-1));
+                            Tour child2=crossover.doCrossover(parents.get(j),parents.get(j-1));
+                            System.out.println("JUSTUS");
+                            newPopulation.add(child1);
+                            newPopulation.add(child2);
+                            System.out.println("JUSTUuuuuuuuuuuuuuuS");
+                        }
+
+                        newPopulation=mutation.doMutation(newPopulation);
+
+                        population.setTours(newPopulation);
+                        result=getFitnessAll(population);
+
+                        HSQLDBManager.instance.addFitnessToScenario(scenario.getId(),i, result);
+
+                        System.out.println(scenario.getId()+", "+i+", "+result);
+
+                    } catch (PopulationTooSmallException e) {
+                        e.printStackTrace();
+                    }
+                //}
+
+            }
+        }
+    }
+
+    public boolean gosForward(double result) {
+        if (Math.abs(lastResult - result) < 0.00001) {
+            lastResutCounter++;
+        } else {
+            lastResutCounter = 0;
+        }
+        if (lastResutCounter >= 1000) {
+            return false;
+        }
+        this.lastResult = result;
+        return true;
+    }
+
+    private boolean isSolutionQualityReached(double quality) {
+        return (quality * 0.95) <= 2579;
+    }
+
+    public double getFitnessAll(Population population){
+        double populationFitness=0;
+
+        ArrayList<Tour> populationTours=population.getTours();
+
+        for(Tour tour : populationTours){
+            populationFitness=populationFitness+tour.getFitness();
+        }
+
+        return populationFitness;
     }
 
     public static void main(String... args) {
+        long permutationsNumber=Long.parseUnsignedLong("280");
         Application application = new Application();
         application.startupHSQLDB();
         application.loadData();
-        application.initConfiguration();
-        application.execute();
+        BruteForce bruteForce=new BruteForce();
+        Population population=bruteForce.createPermutations(availableCities,permutationsNumber);
+        Scenario[] scenarios=application.initConfiguration();
+        application.execute(scenarios,population);
         application.shutdownHSQLDB();
     }
 }
