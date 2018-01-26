@@ -2,6 +2,7 @@ package mutation;
 
 import base.City;
 import base.Tour;
+import main.Configuration;
 import main.Scenario;
 import random.MersenneTwisterFast;
 
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 public class InsertionMutation implements IMutation {
     @Override
     public ArrayList<Tour> doMutation(ArrayList<Tour> tours) {
-        MersenneTwisterFast randomGenerator = new MersenneTwisterFast();
+        MersenneTwisterFast randomGenerator =  Configuration.instance.randomForMutation;
         Scenario scenario = new Scenario();     //TODO
 
         for (Tour tour:tours) {

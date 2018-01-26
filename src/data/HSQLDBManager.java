@@ -1,9 +1,14 @@
 package data;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.*;
+import statistics.Statistics;
 
 import com.sun.org.apache.xpath.internal.SourceTree;
 import main.Configuration;
+import main.Scenario;
 
 public enum HSQLDBManager {
     instance;
@@ -59,25 +64,10 @@ public enum HSQLDBManager {
         sqlStringBuilder.append(" )");
         update(sqlStringBuilder.toString());
 
-/*
-        sqlStringBuilder.append("CREATE TABLE scenarios ").append(" ( ");
-        sqlStringBuilder.append("id VARCHAR(20) NOT NULL").append(",");
-        sqlStringBuilder.append("crossovertype VARCHAR(20) NOT NULL").append(",");
-        sqlStringBuilder.append("crossoverratio FLOAT(1,4) NOT NULL").append(",");
-        sqlStringBuilder.append("mutationtype  VARCHAR(20) NOT NULL").append(",");
-        sqlStringBuilder.append("mutationratio FLOAT(1,4) NOT NULL").append(",");
-        sqlStringBuilder.append("selection VARCHAR(20) NOT NULL").append(",");
-        sqlStringBuilder.append("buildstatistics VARCHAR(20) NOT NULL").append(",");
-        sqlStringBuilder.append("isevaluated VARCHAR(20) NOT NULL").append(",");
-        sqlStringBuilder.append("evaluation VARCHAR(20) NOT NULL").append(",");
-        sqlStringBuilder.append("maximumnumberofevaluations VARCHAR(20) NOT NULL");
-        sqlStringBuilder.append(" )");
-        update(sqlStringBuilder.toString());
-*/
 
+        sqlStringBuilder = new StringBuilder();
         sqlStringBuilder.append("CREATE TABLE iterations ").append(" ( ");
         sqlStringBuilder.append("id VARCHAR(20) NOT NULL").append(",");
-        sqlStringBuilder.append("scenario VARCHAR(20) NOT NULL").append(",");
         sqlStringBuilder.append("iterationid  VARCHAR(20) NOT NULL").append(",");
         sqlStringBuilder.append("fitnessvalue VARCHAR(20) NOT NULL");
         sqlStringBuilder.append(" )");
@@ -95,8 +85,8 @@ public enum HSQLDBManager {
         update(statement);
     }
 
-    public void addFitnesstoScenario(String id, String scenario, int iterationid, int fitnessvalue) {
-        String statement = "INSERT INTO iterations(id, scenario, iterationid, fitnessvalue) VALUES (" +
+    public void addFitnessToScenario(String id, String scenario, int iterationid, double fitnessvalue) {
+        String statement = "INSERT INTO iterations(id, iterationid, fitnessvalue) VALUES (" +
                 "'" + id + "'," +
                 "'" + scenario + "'," +
                 "'" + iterationid + "'," +
@@ -104,22 +94,54 @@ public enum HSQLDBManager {
         update(statement);
     }
 
-    public void checkTable() {
-        String query = "SELECT id FROM data;";
-        String[] output = new String[5];
+    public void checkTable(){
+        //String query = "INSERT INTO iterations(id, iterationid, fitnessvalue) VALUES ('3','22','3','11');";
+        String query1 = "SELECT * FROM iterations";
+        //update(query);
+        String[] output = new String[4];
         try {
             Statement statement = connection.createStatement();
-            ResultSet result = statement.executeQuery(query);
-            while (result.next()) {
-                int i=0;
-                output[i] = result.getArray(i).toString();
-                System.out.println("SQL Table iteration: "+output[i]);
-                i++;
+            ResultSet result = statement.executeQuery(query1);
+            if(result.next()) {
+                for (int j=0;j<4;j++) {
+                    output[j] = result.getString(j+1);
+                    System.out.println("SQL Table iteration: " + output[j]);
+                }
+            writeCsv();
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
+    public void writeCsv(String scenarioId){
+        StringBuilder sqlStringBuilder = new StringBuilder();
+        sqlStringBuilder.append("SELECT * FROM iterations WHERE id='");
+        sqlStringBuilder.append(scenarioId).append("'");
+        sqlStringBuilder.append(" )");
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet result = statement.executeQuery(sqlStringBuilder.toString());
+            int size =0;
+            if (result != null)
+            {
+                result.beforeFirst();
+                result.last();
+                size = result.getRow();
+            }
+            double[] output = null;
+            if(result.next()) {
+                for (int j = 0; j < size; j++) {
+                    output[j] = result.getDouble(j + 1);
+                    System.out.println("SQL Table iteration: " + output[j]);
+                }
+            writeCsv(scenarioId,output);
+            }
+            } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
     public String buildSQLStatement(long id,String test) {
