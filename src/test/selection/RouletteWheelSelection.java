@@ -6,13 +6,14 @@ import base.Tour;
 import main.Configuration;
 import org.junit.Assert;
 import org.junit.Test;
+import selection.PopulationTooSmallException;
 
 import java.util.ArrayList;
 
 public class RouletteWheelSelection {
 
     @Test
-    public void testDoSelection() {
+    public void testDoSelection() throws PopulationTooSmallException {
         Tour[] tour = { new Tour(), new Tour(), new Tour(), new Tour() };
 
         City[] cities = { new City(1, 10, 10), new City(2, 20, 20),
