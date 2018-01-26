@@ -2,24 +2,21 @@ package selection;
 
 import base.Population;
 import base.Tour;
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import main.Configuration;
-import random.MersenneTwisterFast;
 
 import java.util.*;
 
 public class RouletteWheelSelection implements ISelection {
 
-    public ArrayList<Tour> doSelection(Population population) {
-        ArrayList<Tour> result = new ArrayList<>();
+    public ArrayList<Tour> doSelection(Population population) throws PopulationTooSmallException {
 
-        int size = Configuration.instance.ROULETTE_WHEEL_SELECT_COUNT;
-
-        if (size > population.getTours().size()) {
-            size = population.getTours().size();
+        if (population.getTours().size() < Configuration.instance.ROULETTE_WHEEL_SELECT_COUNT) {
+            throw new PopulationTooSmallException();
         }
 
-        for (int i = 0; i < size;) {
+        ArrayList<Tour> result = new ArrayList<>();
+
+        for (int i = 0; i < Configuration.instance.ROULETTE_WHEEL_SELECT_COUNT;) {
             Tour select = doSingleSelection(population);
 
             if (!result.contains(select)) {
