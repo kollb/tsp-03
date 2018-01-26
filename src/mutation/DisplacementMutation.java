@@ -14,7 +14,7 @@ public class DisplacementMutation implements IMutation {
         MersenneTwisterFast randomGenerator = (MersenneTwisterFast) Configuration.instance.random;
         Scenario scenario = new Scenario();                                 //TODO
 
-        for(Tour tour:tours) {
+        for (Tour tour : tours) {
             if (randomGenerator.nextBoolean(scenario.getMutationRatio())) {
                 int startPoint = randomGenerator.nextInt(tour.getSize());
                 int endPoint = randomGenerator.nextInt(tour.getSize());
@@ -24,7 +24,7 @@ public class DisplacementMutation implements IMutation {
                     endPoint = temp;
                 }
                 ArrayList<City> cities = tour.getCities();
-                ArrayList<City> displaced = new ArrayList<City>();
+                ArrayList<City> displaced = new ArrayList<>();
                 for (int i = startPoint; i <= endPoint; i++) {
                     displaced.add(cities.remove(startPoint));
                 }

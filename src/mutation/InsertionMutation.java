@@ -14,7 +14,7 @@ public class InsertionMutation implements IMutation {
         MersenneTwisterFast randomGenerator = (MersenneTwisterFast) Configuration.instance.random;
         Scenario scenario = new Scenario();     //TODO
 
-        for (Tour tour:tours) {
+        for (Tour tour : tours) {
             if (randomGenerator.nextBoolean(scenario.getMutationRatio())) {
                 int selectionPoint = randomGenerator.nextInt(tour.getSize());
                 ArrayList<City> cities = tour.getCities();

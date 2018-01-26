@@ -1,11 +1,11 @@
 package base;
 
-import java.util.*;
+import java.util.ArrayList;
 
 public class Population {
     private ArrayList<Tour> tours;
 
-    public ArrayList<Tour> getTours(){
+    public ArrayList<Tour> getTours() {
         return tours;
     }
 
@@ -13,12 +13,12 @@ public class Population {
         this.tours = new ArrayList<>();
     }
 
-    public Population addTour(Tour tour){
+    public Population addTour(Tour tour) {
         tours.add(tour);
         return this;
     }
 
-    public void setTours(ArrayList<Tour> tours){
-        this.tours=tours;
+    public void setTours(ArrayList<Tour> tours) {
+        this.tours = tours;
     }
 }

@@ -4,7 +4,9 @@ import base.Population;
 import base.Tour;
 import main.Configuration;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class RouletteWheelSelection implements ISelection {
 
@@ -19,7 +21,7 @@ public class RouletteWheelSelection implements ISelection {
         probabilityTourMap = calculateProbabilityTourMap(population);
         ArrayList<Tour> result = new ArrayList<>();
 
-        for (int i = 0; i < Configuration.instance.ROULETTE_WHEEL_SELECT_COUNT;) {
+        for (int i = 0; i < Configuration.instance.ROULETTE_WHEEL_SELECT_COUNT; ) {
             Tour select = doSingleSelection();
 
             if (!result.contains(select)) {
@@ -63,7 +65,7 @@ public class RouletteWheelSelection implements ISelection {
 
         double probability = 0;
         for (Tour tour : population.getTours()) {
-            probability += tour.getFitness()/fitnessSum;
+            probability += tour.getFitness() / fitnessSum;
             tourMap.put(probability, tour);
         }
 
