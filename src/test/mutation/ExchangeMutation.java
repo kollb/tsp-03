@@ -14,7 +14,6 @@ public class ExchangeMutation {
     private mutation.ExchangeMutation mutation;
     private Tour tour;
     private ArrayList<Tour> tours;
-    private double mutationRatio;
 
     @Before
     public void testSetup() {
@@ -29,37 +28,37 @@ public class ExchangeMutation {
 
     @Test
     public void testResultNotNull() {
-        ArrayList<Tour> result = mutation.doMutation(tours,mutationRatio);
+        ArrayList<Tour> result = mutation.doMutation(tours);
         assertNotNull(result);
     }
 
     @Test
     public void testResultLength() {
-        ArrayList<Tour> result = mutation.doMutation(tours,mutationRatio);
+        ArrayList<Tour> result = mutation.doMutation(tours);
         assertEquals(280, result.remove(0).getSize());
     }
 
     @Test
     public void checkElement0NotExists() {
-        ArrayList<Tour> result = mutation.doMutation(tours,mutationRatio);
+        ArrayList<Tour> result = mutation.doMutation(tours);
         assertFalse(result.remove(0).containsCity(new City(0, 0, 0)));
     }
 
     @Test
     public void checkElement281NotExists() {
-        ArrayList<Tour> result = mutation.doMutation(tours,mutationRatio);
+        ArrayList<Tour> result = mutation.doMutation(tours);
         assertFalse(result.remove(0).containsCity(new City(281, 281, 281)));
     }
 
     @Test
     public void checkElements() {
-        ArrayList<Tour> result = mutation.doMutation(tours,mutationRatio);
+        ArrayList<Tour> result = mutation.doMutation(tours);
         assertTrue(result.get(0).getCities().containsAll(tour.getCities()) && tour.getCities().containsAll(result.remove(0).getCities()));
     }
 
     @Test
     public void checkForDuplicates() {
-        ArrayList<Tour> result = mutation.doMutation(tours,mutationRatio);
+        ArrayList<Tour> result = mutation.doMutation(tours);
         HashSet<City> resultSet = new HashSet<>(result.remove(0).getCities());
         assertEquals(280, resultSet.size());
     }
