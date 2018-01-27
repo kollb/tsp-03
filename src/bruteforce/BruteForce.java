@@ -30,9 +30,8 @@ public class BruteForce {
 
     public Population createPermutations(ArrayList<City> cityList, long permutationsNumber) {
         HashSet<Tour> tours = new HashSet<>();
-
-        for (int i = 0; i < permutationsNumber; i++) {
-            int counter = 0;
+        long counter=0;
+        while(counter < permutationsNumber) {
             Tour newTour = generateTour(cityList);
             if (tours.add(newTour)) {
                 counter++;
@@ -71,19 +70,18 @@ public class BruteForce {
     }
 
     public double getFitnessTop25(){
-        double populationFitness=0;
-
+        double populationFitness=1000000;
 
         ArrayList<Tour> populationTours=population.getTours();
         int quarter=getPopulationSizeQuarter();
+        for(int i=0;i<quarter;i++){
+            Tour tour=populationTours.get(i);
+            if(tour.getFitness()< populationFitness){
+                populationFitness = tour.getFitness();
 
-        for(Tour tour:populationTours){
-            int counter=0;
-            while(counter<quarter){
-                populationFitness=populationFitness+tour.getFitness();
-                counter++;
             }
         }
+
 
         return populationFitness;
     }
@@ -132,6 +130,16 @@ public class BruteForce {
         }
 
         return populationFitness;
+    }
+
+    public double getBestResult(Population population){
+        double bestResult=90000000;
+        for (Tour tour : population.getTours()){
+            if(tour.getFitness()< bestResult){
+                bestResult = tour.getFitness();
+            }
+        }
+        return bestResult;
     }
 
     public void evaluateFitness(){

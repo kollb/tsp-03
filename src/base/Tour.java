@@ -26,7 +26,7 @@ public class Tour implements Comparable<Tour> {
     }
 
     public int getSize() {
-        return cities.size();
+        return cities.size()/2;
     }
 
     public boolean containsCity(City city) {

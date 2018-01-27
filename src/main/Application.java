@@ -58,7 +58,7 @@ public class Application {
         System.out.println("availableCities (size) : " + availableCities.size());
 
         distances = tspLibReader.getDistances();
-        printMatrix(distances);
+        //printMatrix(distances);
 
         instanceReader.close();
 
@@ -85,6 +85,7 @@ public class Application {
     }
 
     public void execute(Scenario[] scenarios, Population population) {
+        BruteForce bruteForce = new BruteForce();
         for (Scenario scenario : scenarios) {
 
             switch (scenario.getSelection()) {
@@ -134,17 +135,19 @@ public class Application {
             }
 
 
-            double result = 100;
-            for (int i = 0; i < 100; i++) {
-                //if(gosForward(result)&&isSolutionQualityReached(result)){
+
+            for (int i = 0; i < 10; i++) {
+                double result = 0;
+                if(gosForward(result)&&isSolutionQualityReached(result)){
                 ArrayList<Tour> newPopulation;
                 ArrayList<Tour> parents;
 
                 newPopulation = population.getTours();
 
                 try {
-                    System.out.println(scenario.getSelection());
                     parents = selection.doSelection(population);
+
+/*
                     for (int j = 1; j < 26; j = j + 2) {
                         Tour child1 = crossover.doCrossover(parents.get(j), parents.get(j - 1));
                         Tour child2 = crossover.doCrossover(parents.get(j), parents.get(j - 1));
@@ -153,20 +156,22 @@ public class Application {
                         newPopulation.add(child2);
                         System.out.println("JUSTUuuuuuuuuuuuuuuS");
                     }
+*/
 
-                    newPopulation = mutation.doMutation(newPopulation);
+
+                    newPopulation = mutation.doMutation(newPopulation,scenario.getMutationRatio());
 
                     population.setTours(newPopulation);
-                    result = getFitnessAll(population);
+                    result = bruteForce.getBestResult(population);
 
                     HSQLDBManager.instance.addFitnessToScenario(scenario.getId(), i, result);
-
+                    //HSQLDBManager.instance.writeCsv(scenario.getId());
                     System.out.println(scenario.getId() + ", " + i + ", " + result);
 
                 } catch (PopulationTooSmallException e) {
                     e.printStackTrace();
                 }
-                //}
+            }
 
             }
         }
@@ -210,6 +215,7 @@ public class Application {
         Population population = bruteForce.createPermutations(availableCities, permutationsNumber);
         Scenario[] scenarios = application.initConfiguration();
         application.execute(scenarios, population);
+        //bruteForce.evaluateFitness();
         application.shutdownHSQLDB();
     }
 }

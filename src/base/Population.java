@@ -21,4 +21,12 @@ public class Population {
     public void setTours(ArrayList<Tour> tours) {
         this.tours = tours;
     }
+
+    public int getSize(){
+        int size=0;
+        for(Tour tour:tours){
+            size++;
+        }
+        return size;
+    }
 }
