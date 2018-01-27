@@ -1,16 +1,22 @@
 package bruteforce;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-
+import base.City;
 import base.Population;
 import base.Tour;
-import base.City;
 import main.Configuration;
 import random.MersenneTwisterFast;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Scanner;
+
 public class BruteForce {
+    /*
+    private TSPLIBReader tspReader;
+    private InstanceReader instReader;
+    private ArrayList<Double> resultList;
+    */
 
     private MersenneTwisterFast mtwister = (MersenneTwisterFast) Configuration.instance.random;
     private Population population=new Population();
@@ -22,35 +28,32 @@ public class BruteForce {
     }
     */
 
-    public Population createPermutations(ArrayList<City> cityList, long permutationsNumber){
-        HashSet<Tour> tours=new HashSet<Tour>();
-        ArrayList<Tour> PopulationTours=new ArrayList<Tour>();
+    public Population createPermutations(ArrayList<City> cityList, long permutationsNumber) {
+        HashSet<Tour> tours = new HashSet<>();
 
-        for(int i=0;i<permutationsNumber;i++){
-            int counter=0;
+        for (int i = 0; i < permutationsNumber; i++) {
+            int counter = 0;
             Tour newTour = generateTour(cityList);
             if (tours.add(newTour)) {
                 counter++;
             }
         }
-        for(Tour tour:tours){
-            PopulationTours.add(tour);
-        }
+        ArrayList<Tour> PopulationTours = new ArrayList<>(tours);
+
         this.population.setTours(PopulationTours);
 
         return this.population;
-        }
+    }
 
+    public Tour generateTour(ArrayList<City> cityArrayList) {
 
-    public Tour generateTour(ArrayList<City> cityArrayList){
-
-        Tour newTour=new Tour();
+        Tour newTour = new Tour();
         while(!cityArrayList.isEmpty()) {
 
-            int random1 = mtwister.nextInt(0, cityArrayList.size()-2);
-            int random2 = mtwister.nextInt(0, cityArrayList.size()-2);
+            int random1 = mtwister.nextInt(0, cityArrayList.size() - 2);
+            int random2 = mtwister.nextInt(0, cityArrayList.size() - 2);
 
-            Collections.swap(cityArrayList,random1,random2);
+            Collections.swap(cityArrayList, random1, random2);
 
             newTour.addCity(cityArrayList.get(random1));
             newTour.addCity(cityArrayList.get(random2));
@@ -64,9 +67,7 @@ public class BruteForce {
     public int getPopulationSizeQuarter(){
         ArrayList<Tour> populationTours=population.getTours();
 
-        int index=populationTours.size()/4;
-
-        return index;
+        return populationTours.size()/4;
     }
 
     public double getFitnessTop25(){
@@ -121,4 +122,42 @@ public class BruteForce {
         return populationFitness;
     }
 
+    public double getFitnessAll() {
+        double populationFitness = 0;
+
+        ArrayList<Tour> populationTours = population.getTours();
+
+        for (Tour tour : populationTours) {
+            populationFitness = populationFitness + tour.getFitness();
+        }
+
+        return populationFitness;
+    }
+
+    public void evaluateFitness(){
+        Scanner scan = new Scanner(System.in);
+        System.out.println("Choose your evaluation option:      ");
+        System.out.println("1. Get Top 25% Percentile Fitnessdata");
+        System.out.println("2. Get Last 25% Percentile Fitnessdata ");
+        System.out.println("3. Get  Mid-50% Percentile Fitnessdata");
+        System.out.println("4. Get All Fitnessdata");
+        String option = scan.nextLine();
+
+        switch (option){
+            case "1":
+                System.out.println("Top 25% Percentile Fitness: "+getFitnessTop25());
+                break;
+            case "2":
+                System.out.println("Last 25% Percentile Fitness "+getFitnessLast25());
+                break;
+            case "3":
+                System.out.println("Mid-50% Percentile Fitness "+getFitnessMid50());
+                break;
+            case "4":
+                System.out.println("Fitness data All:  "+ getFitnessAll());
+                break;
+            default:
+                System.out.println("Wrong Option");
+        }
+    }
 }
