@@ -45,24 +45,24 @@ public class BruteForce {
         return this.population;
     }
 
-    public Tour generateTour(ArrayList<City> cityArrayList) {
+    public Tour generateTour(ArrayList<City> cityArrayList){
 
-        Tour newTour = new Tour();
-        while(!cityArrayList.isEmpty()) {
+        Tour newTour=new Tour();
+        ArrayList<Tour> cityListClone=new ArrayList<>();
 
-            int random1 = mtwister.nextInt(0, cityArrayList.size() - 2);
-            int random2 = mtwister.nextInt(0, cityArrayList.size() - 2);
+        for(int i=0;i<cityArrayList.size();i++) {
 
-            Collections.swap(cityArrayList, random1, random2);
+            int random1 = mtwister.nextInt(0, cityArrayList.size()-2);
+            int random2 = mtwister.nextInt(0, cityArrayList.size()-2);
+
+            Collections.swap(cityArrayList,random1,random2);
 
             newTour.addCity(cityArrayList.get(random1));
             newTour.addCity(cityArrayList.get(random2));
-
-            cityArrayList.remove(cityArrayList.get(random1));
-            cityArrayList.remove(cityArrayList.get(random2));
         }
         return newTour;
     }
+
 
     public int getPopulationSizeQuarter(){
         ArrayList<Tour> populationTours=population.getTours();
