@@ -2,12 +2,13 @@ package test.mutation;
 
 import base.City;
 import base.Tour;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+
+import static org.junit.Assert.*;
 
 public class ExchangeMutation {
     private mutation.ExchangeMutation mutation;
@@ -18,10 +19,10 @@ public class ExchangeMutation {
     public void testSetup() {
         mutation = new mutation.ExchangeMutation();
         tour = new Tour();
-        for(int i = 1; i <= 280;i++) {
-            tour.addCity(new City(i,i,i));
+        for (int i = 1; i <= 280; i++) {
+            tour.addCity(new City(i, i, i));
         }
-        tours = new ArrayList<Tour>();
+        tours = new ArrayList<>();
         tours.add(tour);
     }
 
@@ -34,19 +35,19 @@ public class ExchangeMutation {
     @Test
     public void testResultLength() {
         ArrayList<Tour> result = mutation.doMutation(tours);
-        assertEquals(280,result.remove(0).getSize());
+        assertEquals(280, result.remove(0).getSize());
     }
 
     @Test
     public void checkElement0NotExists() {
         ArrayList<Tour> result = mutation.doMutation(tours);
-        assertFalse(result.remove(0).containsCity(new City(0,0,0)));
+        assertFalse(result.remove(0).containsCity(new City(0, 0, 0)));
     }
 
     @Test
     public void checkElement281NotExists() {
         ArrayList<Tour> result = mutation.doMutation(tours);
-        assertFalse(result.remove(0).containsCity(new City(281,281,281)));
+        assertFalse(result.remove(0).containsCity(new City(281, 281, 281)));
     }
 
     @Test
@@ -59,6 +60,6 @@ public class ExchangeMutation {
     public void checkForDuplicates() {
         ArrayList<Tour> result = mutation.doMutation(tours);
         HashSet<City> resultSet = new HashSet<>(result.remove(0).getCities());
-        assertEquals(280,resultSet.size());
+        assertEquals(280, resultSet.size());
     }
 }

@@ -1,18 +1,16 @@
 package test.crossover;
 
 import base.City;
+import base.Tour;
 import org.junit.Before;
 import org.junit.Test;
-import base.Tour;
-
-import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 
 public class OrderedCrossover {
 
     crossover.OrderedCrossover oc;
-    Tour tour1,tour2,child;
+    Tour tour1, tour2, child;
 
     @Before
     public void init() {
@@ -28,16 +26,16 @@ public class OrderedCrossover {
             tour2.addCity(tour1.getCity(i));
         }
 
-        child = oc.doCrossover(tour1,tour2);
+        child = oc.doCrossover(tour1, tour2);
     }
 
     @Test
-    public void testNotNull(){
+    public void testNotNull() {
         assertNotNull(child);
     }
 
     @Test
-    public void testLength(){
+    public void testLength() {
         assertEquals(280, child.getSize());
     }
 
