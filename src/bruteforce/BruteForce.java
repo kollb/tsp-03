@@ -145,10 +145,10 @@ public class BruteForce {
     public void evaluateFitness(){
         Scanner scan = new Scanner(System.in);
         System.out.println("Choose your evaluation option:      ");
-        System.out.println("1. Get Top 25% Percentile Fitnessdata");
-        System.out.println("2. Get Last 25% Percentile Fitnessdata ");
-        System.out.println("3. Get  Mid-50% Percentile Fitnessdata");
-        System.out.println("4. Get All Fitnessdata");
+        System.out.println("1. Get Best of Top 25% Percentile Fitnessdata");
+        System.out.println("2. Get Best of  Last 25% Percentile Fitnessdata ");
+        System.out.println("3. Get Best of  Mid-50% Percentile Fitnessdata");
+        System.out.println("4. Get Best of All Fitnessdata");
         String option = scan.nextLine();
 
         switch (option){
