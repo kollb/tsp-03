@@ -3,7 +3,6 @@ package main;
 import crossover.ICrossover;
 import mutation.IMutation;
 import selection.ISelection;
-import data.HSQLDBManager;
 
 public class LoadAlgorithm {
     Scenario scenario;
@@ -11,7 +10,7 @@ public class LoadAlgorithm {
     ISelection selection;
     IMutation mutation;
 
-    public LoadAlgorithm(Scenario scenario){
+    public LoadAlgorithm(Scenario scenario) {
         this.scenario = scenario;
         //HSQLDBManager.instance.addScenario();
 

@@ -1,21 +1,21 @@
 package main;
 
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.events.Attribute;
+import javax.xml.stream.events.EndElement;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
 import java.io.File;
 import java.io.FileReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import javax.xml.stream.events.EndElement;
-import javax.xml.stream.events.StartElement;
-import javax.xml.stream.events.XMLEvent;
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.events.Attribute;
 
 public class XMLParser {
 
-    private List<Scenario> scenarioList = new ArrayList<Scenario>();
+    private List<Scenario> scenarioList = new ArrayList<>();
 
     public XMLParser(File xmlFile) {
         XMLInputFactory read = XMLInputFactory.newInstance();

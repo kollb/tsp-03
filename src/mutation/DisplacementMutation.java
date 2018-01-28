@@ -2,6 +2,7 @@ package mutation;
 
 import base.City;
 import base.Tour;
+import main.Configuration;
 import main.Scenario;
 import random.MersenneTwisterFast;
 
@@ -9,12 +10,11 @@ import java.util.ArrayList;
 
 public class DisplacementMutation implements IMutation {
     @Override
-    public ArrayList<Tour> doMutation(ArrayList<Tour> tours) {
-        MersenneTwisterFast randomGenerator = new MersenneTwisterFast();
-        Scenario scenario = new Scenario();                                 //TODO
+    public ArrayList<Tour> doMutation(ArrayList<Tour> tours, double mutationRatio) {
+        MersenneTwisterFast randomGenerator = (MersenneTwisterFast) Configuration.instance.random;
 
-        for(Tour tour:tours) {
-            if (randomGenerator.nextBoolean(scenario.getMutationRatio())) {
+        for (Tour tour : tours) {
+            if (randomGenerator.nextBoolean(mutationRatio)) {
                 int startPoint = randomGenerator.nextInt(tour.getSize());
                 int endPoint = randomGenerator.nextInt(tour.getSize());
                 if (startPoint > endPoint) {
@@ -23,7 +23,7 @@ public class DisplacementMutation implements IMutation {
                     endPoint = temp;
                 }
                 ArrayList<City> cities = tour.getCities();
-                ArrayList<City> displaced = new ArrayList<City>();
+                ArrayList<City> displaced = new ArrayList<>();
                 for (int i = startPoint; i <= endPoint; i++) {
                     displaced.add(cities.remove(startPoint));
                 }

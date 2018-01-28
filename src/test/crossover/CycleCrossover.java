@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 public class CycleCrossover {
 
     crossover.CycleCrossover cc;
-    Tour tour1,tour2,child;
+    Tour tour1, tour2, child;
 
     @Before
     public void init() {
@@ -26,16 +26,16 @@ public class CycleCrossover {
             tour2.addCity(tour1.getCity(i));
         }
 
-        child = cc.doCrossover(tour1,tour2);
+        child = cc.doCrossover(tour1, tour2);
     }
 
     @Test
-    public void testNotNull(){
+    public void testNotNull() {
         assertNotNull(child);
     }
 
     @Test
-    public void testLength(){
+    public void testLength() {
         assertEquals(280, child.getSize());
     }
 
