@@ -35,10 +35,9 @@ public class HeuristicCrossover implements ICrossover {
         alreadyUsedIndices.add(positionParent1);
 
         //do the Magic, fill child from left starting with the second gene in the child
-        for (int i = 1; i < tour1.getSize(); i++) {
-
-            //gets all Neighbour Citys with responding Fitness. Saves them into those maps
+        for (int i = 1; i < child.getSize(); i++) {
             HashMap<City, Double> neighboursAndFitness = new HashMap<>();
+            //gets all Neighbour Citys with responding Fitness. Saves them into those maps
             getNeighbourCitys(child, parent1, positionParent1, parent2, positionParent2, neighboursAndFitness);
 
             if (neighboursAndFitness.isEmpty()) {
@@ -54,11 +53,9 @@ public class HeuristicCrossover implements ICrossover {
                 City bestFitnessCity = bestFitness.getKey();
 
                 positionParent1 = parent1.indexOf(bestFitnessCity);
-                positionParent2 = parent2.indexOf(parent1.get(positionParent1));
+                positionParent2 = parent2.indexOf(bestFitnessCity);
                 child.addCity(i, parent1.get(positionParent1));
                 alreadyUsedIndices.add(positionParent1);
-
-                neighboursAndFitness.clear();
             }
         }
 
@@ -115,10 +112,10 @@ public class HeuristicCrossover implements ICrossover {
             tempPosParentRight = positionParent2 + 1;
         }
         if (!child.containsCity(parent2.get(tempPosParentLeft))) {
-            neighbourCitys.put(parent2.get(tempPosParentLeft), getFitness(parent2.get(tempPosParentLeft), parent2.get(positionParent1)));
+            neighbourCitys.put(parent2.get(tempPosParentLeft), getFitness(parent2.get(tempPosParentLeft), parent1.get(positionParent1)));
         }
         if (!child.containsCity(parent2.get(tempPosParentRight))) {
-            neighbourCitys.put(parent2.get(tempPosParentRight), getFitness(parent2.get(tempPosParentRight), parent2.get(positionParent1)));
+            neighbourCitys.put(parent2.get(tempPosParentRight), getFitness(parent2.get(tempPosParentRight), parent1.get(positionParent1)));
         }
     }
 }
