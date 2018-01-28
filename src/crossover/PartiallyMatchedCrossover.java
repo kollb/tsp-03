@@ -3,7 +3,7 @@ package crossover;
 import base.Tour;
 
 public class PartiallyMatchedCrossover implements ICrossover {
-    public Tour doCrossover(Tour tour01,Tour tour02) {
+    public Tour doCrossover(Tour tour01, Tour tour02) {
         return null;
     }
 

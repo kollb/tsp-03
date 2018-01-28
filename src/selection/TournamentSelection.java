@@ -17,7 +17,7 @@ public class TournamentSelection implements ISelection {
         ArrayList<Tour> result = new ArrayList<>();
         ArrayList<Tour> selected = new ArrayList<>();
 
-        for (int i = 0; i < size;) {
+        for (int i = 0; i < size; ) {
             Tour select = population.getTours().get(Configuration.instance.random
                     .nextInt(population.getTours().size()));
 
@@ -27,11 +27,11 @@ public class TournamentSelection implements ISelection {
             }
         }
 
-        for (int i = 0; i < selected.size(); i+= 2) {
-            if (selected.get(i).getFitness() < selected.get(i+1).getFitness()) {
+        for (int i = 0; i < selected.size(); i += 2) {
+            if (selected.get(i).getFitness() < selected.get(i + 1).getFitness()) {
                 result.add(selected.get(i));
             } else {
-                result.add(selected.get(i+1));
+                result.add(selected.get(i + 1));
             }
         }
 

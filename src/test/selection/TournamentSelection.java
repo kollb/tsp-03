@@ -14,9 +14,9 @@ public class TournamentSelection {
 
     @Test
     public void testDoSelection() throws PopulationTooSmallException {
-        Tour[] tour = { new Tour(), new Tour(), new Tour(), new Tour() };
+        Tour[] tour = {new Tour(), new Tour(), new Tour(), new Tour()};
 
-        City[] cities = { new City(1, 10, 10), new City(2, 20, 20),
+        City[] cities = {new City(1, 10, 10), new City(2, 20, 20),
                 new City(3, 30, 30), new City(4, 40, 40)};
 
         tour[0].addCity(cities[0]);
@@ -42,9 +42,9 @@ public class TournamentSelection {
         Population pop = new Population();
 
         pop.addTour(tour[0])
-            .addTour(tour[1])
-            .addTour(tour[2])
-            .addTour(tour[3]);
+                .addTour(tour[1])
+                .addTour(tour[2])
+                .addTour(tour[3]);
 
         int[] pseudoInts = {0, 1, 2, 3};
         Configuration.instance.random = new PseudoRandom(pseudoInts);

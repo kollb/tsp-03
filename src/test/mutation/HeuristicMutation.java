@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 
 public class HeuristicMutation {
     private mutation.HeuristicMutation mutation;
@@ -20,10 +19,10 @@ public class HeuristicMutation {
     public void testSetup() {
         mutation = new mutation.HeuristicMutation();
         tour = new Tour();
-        for(int i = 1; i <= 280;i++) {
-            tour.addCity(new City(i,i,i));
+        for (int i = 1; i <= 280; i++) {
+            tour.addCity(new City(i, i, i));
         }
-        tours = new ArrayList<Tour>();
+        tours = new ArrayList<>();
         tours.add(tour);
     }
 
@@ -36,19 +35,19 @@ public class HeuristicMutation {
     @Test
     public void testResultLength() {
         ArrayList<Tour> result = mutation.doMutation(tours);
-        assertEquals(280,result.remove(0).getSize());
+        assertEquals(280, result.remove(0).getSize());
     }
 
     @Test
     public void checkElement0NotExists() {
         ArrayList<Tour> result = mutation.doMutation(tours);
-        assertFalse(result.remove(0).containsCity(new City(0,0,0)));
+        assertFalse(result.remove(0).containsCity(new City(0, 0, 0)));
     }
 
     @Test
     public void checkElement281NotExists() {
         ArrayList<Tour> result = mutation.doMutation(tours);
-        assertFalse(result.remove(0).containsCity(new City(281,281,281)));
+        assertFalse(result.remove(0).containsCity(new City(281, 281, 281)));
     }
 
     @Test
@@ -61,6 +60,6 @@ public class HeuristicMutation {
     public void checkForDuplicates() {
         ArrayList<Tour> result = mutation.doMutation(tours);
         HashSet<City> resultSet = new HashSet<>(result.remove(0).getCities());
-        assertEquals(280,resultSet.size());
+        assertEquals(280, resultSet.size());
     }
 }

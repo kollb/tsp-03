@@ -1,14 +1,9 @@
 package data;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.sql.*;
+import main.Configuration;
 import statistics.Statistics;
 
-import com.sun.org.apache.xpath.internal.SourceTree;
-import main.Configuration;
-import main.Scenario;
+import java.sql.*;
 
 public enum HSQLDBManager {
     instance;
@@ -22,7 +17,7 @@ public enum HSQLDBManager {
         try {
             Class.forName("org.hsqldb.jdbcDriver");
             String databaseURL = driverName + Configuration.instance.databaseFile;
-            connection = DriverManager.getConnection(databaseURL,username,password);
+            connection = DriverManager.getConnection(databaseURL, username, password);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -93,7 +88,8 @@ public enum HSQLDBManager {
         update(statement);
     }
 
-    public void writeCsv(String scenarioId){
+    public void writeCsv(String scenarioId) {
+        Statistics stat = new Statistics();
         StringBuilder sqlStringBuilder = new StringBuilder();
         sqlStringBuilder.append("SELECT * FROM iterations WHERE id='");
         sqlStringBuilder.append(scenarioId).append("'");
@@ -101,29 +97,28 @@ public enum HSQLDBManager {
         try {
             Statement statement = connection.createStatement();
             ResultSet result = statement.executeQuery(sqlStringBuilder.toString());
-            int size =0;
-            if (result != null)
-            {
+            int size = 0;
+            if (result != null) {
                 result.beforeFirst();
                 result.last();
                 size = result.getRow();
             }
             double[] output = null;
-            if(result.next()) {
+            if (result.next()) {
                 for (int j = 0; j < size; j++) {
                     output[j] = result.getDouble(j + 1);
                     System.out.println("SQL Table iteration: " + output[j]);
                 }
-                //writeCsv(scenarioId,output);
+
             }
+            stat.writeCSVFile(scenarioId, output);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
 
-
-    public String buildSQLStatement(long id,String test) {
+    public String buildSQLStatement(long id, String test) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("INSERT INTO data (id,test) VALUES (");
         stringBuilder.append(id).append(",");
@@ -134,7 +129,7 @@ public enum HSQLDBManager {
     }
 
     public void insert(String test) {
-        update(buildSQLStatement(System.nanoTime(),test));
+        update(buildSQLStatement(System.nanoTime(), test));
     }
 
     public void shutdown() {
