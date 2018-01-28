@@ -134,9 +134,16 @@ public class Application {
                     break;
             }
 
+            System.out.println("-------------------");
+            System.out.println(" Scenario: "+ scenario.getId());
+            System.out.println(" Crossover Type: "+ scenario.getCrossover());
+            System.out.println(" Crossover Ratio: "+ scenario.getCrossoverRatio());
+            System.out.println(" Mutation Type: "+ scenario.getMutation());
+            System.out.println(" Mutation Ratio: "+ scenario.getMutationRatio());
+            System.out.println(" Selection Type: "+ scenario.getSelection());
+            System.out.println("-------------------");
 
-
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 1000; i++) {
                 double result = 0;
                 if(gosForward(result)&&isSolutionQualityReached(result)){
                 ArrayList<Tour> newPopulation;
@@ -162,13 +169,18 @@ public class Application {
                     newPopulation = mutation.doMutation(newPopulation,scenario.getMutationRatio());
 
                     population.setTours(newPopulation);
-                    result = bruteForce.getBestResult(population);
+                    result = Math.round(bruteForce.getBestResult(population)*100.0)/100.0;
 
                     HSQLDBManager.instance.addFitnessToScenario(scenario.getId(), i, result);
-                    //HSQLDBManager.instance.checkTable(i);
-                    HSQLDBManager.instance.writeCsv(scenario.getId(),i);
-                    System.out.println(scenario.getId() + ", " + i + ", " + result);
-
+/*                    if (i == 750) {
+                        HSQLDBManager.instance.checkTable(i);
+                    }*/
+                    if (i == 750) {
+                        HSQLDBManager.instance.writeCsv(scenario.getId(), i);
+                    }
+                    if (i % 250  == 0) {
+                        System.out.println(scenario.getId() + ", " + i + ", " + result);
+                    }
                 } catch (PopulationTooSmallException e) {
                     e.printStackTrace();
                 }
