@@ -134,18 +134,27 @@ public class Application {
                     break;
             }
 
+            System.out.println("-------------------");
+            System.out.println(" Scenario: "+ scenario.getId());
+            System.out.println(" Crossover Type: "+ scenario.getCrossover());
+            System.out.println(" Crossover Ratio: "+ scenario.getCrossoverRatio());
+            System.out.println(" Mutation Type: "+ scenario.getMutation());
+            System.out.println(" Mutation Ratio: "+ scenario.getMutationRatio());
+            System.out.println(" Selection Type: "+ scenario.getSelection());
+            System.out.println("-------------------");
+            long startTime = System.currentTimeMillis();
+            for (int i = 0; i < 10000; i++) {
 
 
-            for (int i = 0; i < 10; i++) {
                 double result = 0;
                 if(gosForward(result)&&isSolutionQualityReached(result)){
-                ArrayList<Tour> newPopulation;
-                ArrayList<Tour> parents;
+                    ArrayList<Tour> newPopulation;
+                    ArrayList<Tour> parents;
 
-                newPopulation = population.getTours();
+                    newPopulation = population.getTours();
 
-                try {
-                    parents = selection.doSelection(population);
+                    try {
+                        parents = selection.doSelection(population);
 
 /*
                     for (int j = 1; j < 26; j = j + 2) {
@@ -159,20 +168,29 @@ public class Application {
 */
 
 
-                    newPopulation = mutation.doMutation(newPopulation,scenario.getMutationRatio());
+                        newPopulation = mutation.doMutation(newPopulation,scenario.getMutationRatio());
 
-                    population.setTours(newPopulation);
-                    result = bruteForce.getBestResult(population);
+                        population.setTours(newPopulation);
+                        result = Math.round(bruteForce.getBestResult(population)*100.0)/100.0;
 
-                    HSQLDBManager.instance.addFitnessToScenario(scenario.getId(), i, result);
-                    //HSQLDBManager.instance.writeCsv(scenario.getId());
-                    System.out.println(scenario.getId() + ", " + i + ", " + result);
-
-                } catch (PopulationTooSmallException e) {
-                    e.printStackTrace();
+                        HSQLDBManager.instance.addFitnessToScenario(scenario.getId(), i, result);
+/*                    if (i == 750) {
+                        HSQLDBManager.instance.checkTable(i);
+                    }*/
+                        if (i == 999) {
+                            HSQLDBManager.instance.writeCsv(scenario.getId(), i);
+                        }
+                        if (i % 2500  == 0) {
+                            System.out.println("Iteration: " + i + " Best Result: "+ result );
+                        }
+                    } catch (PopulationTooSmallException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
-
+                if (i==9999) {
+                    long endTime = System.currentTimeMillis();
+                    System.out.println("Runtime " + (endTime - startTime)/1000 + " Seconds");
+                }
             }
         }
     }
@@ -183,7 +201,7 @@ public class Application {
         } else {
             lastResutCounter = 0;
         }
-        if (lastResutCounter >= 1000) {
+        if (lastResutCounter >= 10000) {
             return false;
         }
         this.lastResult = result;
@@ -215,7 +233,7 @@ public class Application {
         Population population = bruteForce.createPermutations(availableCities, permutationsNumber);
         Scenario[] scenarios = application.initConfiguration();
         application.execute(scenarios, population);
-        //bruteForce.evaluateFitness();
+        bruteForce.evaluateFitness();
         application.shutdownHSQLDB();
     }
 }
