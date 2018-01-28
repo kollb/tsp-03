@@ -89,8 +89,6 @@ public enum HSQLDBManager {
 
     public void checkTable(int i){
         String query = "SELECT fitnessvalue FROM iterations where id='s01'";
-        String[] output = new String[3];
-        if (i == 3){
         try {
             Statement statement = connection.createStatement();
             ResultSet result = statement.executeQuery(query);
@@ -103,7 +101,7 @@ public enum HSQLDBManager {
             e.printStackTrace();
         }
     }
-    }
+
 
 
 
@@ -112,15 +110,14 @@ public enum HSQLDBManager {
         StringBuilder sqlStringBuilder = new StringBuilder();
         sqlStringBuilder.append("SELECT fitnessvalue FROM iterations where id='");
         sqlStringBuilder.append(scenarioId).append("'");
-        if (i == 10000) {
             try {
                 Statement statement = connection.createStatement();
                 ResultSet result = statement.executeQuery(sqlStringBuilder.toString());
                 int size = 0;
                 if (result != null) {
-                    result.beforeFirst();
-                    result.last();
-                    size = result.getRow();
+/*                    result.beforeFirst();
+                    result.last();*/
+                    size = result.getFetchSize();
                 }
                 ArrayList<Double> output = new ArrayList<Double>(size);
                 while (result.next()) {
@@ -132,10 +129,9 @@ public enum HSQLDBManager {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        } else {
-        }
-        System.out.println();
     }
+
+
 
 
     public String buildSQLStatement(long id, String test) {
