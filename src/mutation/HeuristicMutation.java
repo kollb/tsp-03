@@ -9,12 +9,11 @@ import random.MersenneTwisterFast;
 import java.util.ArrayList;
 
 public class HeuristicMutation implements IMutation {
-    public ArrayList<Tour> doMutation(ArrayList<Tour> tours) {
+    public ArrayList<Tour> doMutation(ArrayList<Tour> tours, double mutationRatio) {
         MersenneTwisterFast randomGenerator = (MersenneTwisterFast) Configuration.instance.random;
-        Scenario scenario = new Scenario();                                 //TODO
 
         for (Tour tour : tours) {
-            if (randomGenerator.nextBoolean(scenario.getMutationRatio())) {
+            if (randomGenerator.nextBoolean(mutationRatio)) {
                 ArrayList<City> cities = tour.getCities();
                 int lambda = randomGenerator.nextInt(10) + 1;               //TODO check if n = 10 is an appropriate value
                 ArrayList<Integer> allNumbers = new ArrayList<>();

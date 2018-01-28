@@ -10,12 +10,11 @@ import java.util.ArrayList;
 
 public class InsertionMutation implements IMutation {
     @Override
-    public ArrayList<Tour> doMutation(ArrayList<Tour> tours) {
+    public ArrayList<Tour> doMutation(ArrayList<Tour> tours, double mutationRatio) {
         MersenneTwisterFast randomGenerator = (MersenneTwisterFast) Configuration.instance.random;
-        Scenario scenario = new Scenario();     //TODO
 
         for (Tour tour : tours) {
-            if (randomGenerator.nextBoolean(scenario.getMutationRatio())) {
+            if (randomGenerator.nextBoolean(mutationRatio)) {
                 int selectionPoint = randomGenerator.nextInt(tour.getSize());
                 ArrayList<City> cities = tour.getCities();
                 City target = cities.remove(selectionPoint);
