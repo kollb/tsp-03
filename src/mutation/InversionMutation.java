@@ -11,12 +11,11 @@ import java.util.Collections;
 
 public class InversionMutation implements IMutation {
     @Override
-    public ArrayList<Tour> doMutation(ArrayList<Tour> tours) {
+    public ArrayList<Tour> doMutation(ArrayList<Tour> tours, double mutationRatio) {
         MersenneTwisterFast randomGenerator = (MersenneTwisterFast) Configuration.instance.random;
-        Scenario scenario = new Scenario();                     //TODO is this correct?
 
         for (Tour tour : tours) {
-            if (randomGenerator.nextBoolean(scenario.getMutationRatio())) {
+            if (randomGenerator.nextBoolean(mutationRatio)) {
                 int arrayLength = tour.getSize();
                 int random1 = randomGenerator.nextInt(0, arrayLength);
                 int random2 = randomGenerator.nextInt(0, arrayLength);

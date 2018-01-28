@@ -10,12 +10,11 @@ import java.util.ArrayList;
 
 public class DisplacementMutation implements IMutation {
     @Override
-    public ArrayList<Tour> doMutation(ArrayList<Tour> tours) {
+    public ArrayList<Tour> doMutation(ArrayList<Tour> tours, double mutationRatio) {
         MersenneTwisterFast randomGenerator = (MersenneTwisterFast) Configuration.instance.random;
-        Scenario scenario = new Scenario();                                 //TODO
 
         for (Tour tour : tours) {
-            if (randomGenerator.nextBoolean(scenario.getMutationRatio())) {
+            if (randomGenerator.nextBoolean(mutationRatio)) {
                 int startPoint = randomGenerator.nextInt(tour.getSize());
                 int endPoint = randomGenerator.nextInt(tour.getSize());
                 if (startPoint > endPoint) {
