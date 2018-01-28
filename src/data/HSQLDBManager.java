@@ -4,6 +4,8 @@ import main.Configuration;
 import statistics.Statistics;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.function.DoubleUnaryOperator;
 
 public enum HSQLDBManager {
     instance;
@@ -43,78 +45,96 @@ public enum HSQLDBManager {
     public void dropTable() {
         System.out.println("--- dropTable");
 
+/*
         StringBuilder sqlStringBuilder = new StringBuilder();
         sqlStringBuilder.append("DROP TABLE data");
         System.out.println("sqlStringBuilder : " + sqlStringBuilder.toString());
-
         update(sqlStringBuilder.toString());
+*/
+
+        StringBuilder sqlStringBuilder1 = new StringBuilder();
+        sqlStringBuilder1.append("DROP TABLE iterations");
+        System.out.println("sqlStringBuilder : " + sqlStringBuilder1.toString());
+        update(sqlStringBuilder1.toString());
     }
 
     public void createTable() {
-        StringBuilder sqlStringBuilder = new StringBuilder();
+/*        StringBuilder sqlStringBuilder = new StringBuilder();
         sqlStringBuilder.append("CREATE TABLE data ").append(" ( ");
         sqlStringBuilder.append("id BIGINT NOT NULL").append(",");
         sqlStringBuilder.append("test VARCHAR(20) NOT NULL").append(",");
         sqlStringBuilder.append("PRIMARY KEY (id)");
-        sqlStringBuilder.append(" )");
-        update(sqlStringBuilder.toString());
+        sqlStringBuilder.append(" );");
+        System.out.println(sqlStringBuilder);
+        update(sqlStringBuilder.toString());*/
 
 
-        sqlStringBuilder = new StringBuilder();
-        sqlStringBuilder.append("CREATE TABLE iterations ").append(" ( ");
-        sqlStringBuilder.append("id VARCHAR(20) NOT NULL").append(",");
-        sqlStringBuilder.append("iterationid  VARCHAR(20) NOT NULL").append(",");
-        sqlStringBuilder.append("fitnessvalue VARCHAR(20) NOT NULL");
-        sqlStringBuilder.append(" )");
-        update(sqlStringBuilder.toString());
-    }
-
-    public void addScenario(String scenarioId, String selectionType, String crossoverType, String mutationType, double crossoverProbability, double mutationProbability) {
-        String statement = "INSERT INTO scenarios(id, selectionType, crossoverType, mutationType, crossoverProbability, mutationProbability) VALUES (" +
-                "'" + scenarioId + "'," +
-                "'" + selectionType + "'," +
-                "'" + crossoverType + "'," +
-                "'" + mutationType + "'," +
-                crossoverProbability + "," +
-                mutationProbability + ");";
-        update(statement);
+        StringBuilder sqlStringBuilder1 = new StringBuilder();
+        sqlStringBuilder1.append("CREATE TABLE iterations ").append(" ( ");
+        sqlStringBuilder1.append("id VARCHAR(20) NOT NULL").append(",");
+        sqlStringBuilder1.append("iterationid  VARCHAR(20) NOT NULL").append(",");
+        sqlStringBuilder1.append("fitnessvalue VARCHAR(20) NOT NULL");
+        sqlStringBuilder1.append(" );");
+        System.out.println(sqlStringBuilder1);
+        update(sqlStringBuilder1.toString());
     }
 
     public void addFitnessToScenario(String id, int iterationid, double fitnessvalue) {
         String statement = "INSERT INTO iterations(id, iterationid, fitnessvalue) VALUES (" +
                 "'" + id + "'," +
                 "'" + iterationid + "'," +
-                "'" + fitnessvalue + ");";
+                "'" + fitnessvalue + "')";
         update(statement);
     }
 
-    public void writeCsv(String scenarioId) {
-        Statistics stat = new Statistics();
-        StringBuilder sqlStringBuilder = new StringBuilder();
-        sqlStringBuilder.append("SELECT * FROM iterations WHERE id='");
-        sqlStringBuilder.append(scenarioId).append("'");
-        sqlStringBuilder.append(" )");
+    public void checkTable(int i){
+        String query = "SELECT fitnessvalue FROM iterations where id='s01'";
+        String[] output = new String[3];
+        if (i == 3){
         try {
             Statement statement = connection.createStatement();
-            ResultSet result = statement.executeQuery(sqlStringBuilder.toString());
-            int size = 0;
-            if (result != null) {
-                result.beforeFirst();
-                result.last();
-                size = result.getRow();
-            }
-            double[] output = null;
-            if (result.next()) {
-                for (int j = 0; j < size; j++) {
-                    output[j] = result.getDouble(j + 1);
-                    System.out.println("SQL Table iteration: " + output[j]);
+            ResultSet result = statement.executeQuery(query);
+            while (result.next()) {
+                                    //output[j] = result.getString(j+1);
+                    System.out.println(result.getDouble("fitnessvalue"));
                 }
 
-            }
-            stat.writeCSVFile(scenarioId, output);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+    }
+
+
+
+    public void writeCsv(String scenarioId,int i) {
+        Statistics stat = new Statistics();
+        StringBuilder sqlStringBuilder = new StringBuilder();
+        sqlStringBuilder.append("SELECT fitnessvalue FROM iterations where id='");
+        sqlStringBuilder.append(scenarioId).append("'");
+        if (i == 10000) {
+            try {
+                Statement statement = connection.createStatement();
+                ResultSet result = statement.executeQuery(sqlStringBuilder.toString());
+                int size = 0;
+                if (result != null) {
+                    result.beforeFirst();
+                    result.last();
+                    size = result.getRow();
+                }
+                ArrayList<Double> output = new ArrayList<Double>(size);
+                while (result.next()) {
+                        output.add(result.getDouble("fitnessvalue"));
+                    }
+
+                Double[] values = output.toArray(new Double[output.size()]);
+                stat.writeCSVFile(scenarioId, values);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else {
+        }
+        System.out.println();
     }
 
 

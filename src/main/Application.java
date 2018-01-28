@@ -136,7 +136,7 @@ public class Application {
 
 
 
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 5; i++) {
                 double result = 0;
                 if(gosForward(result)&&isSolutionQualityReached(result)){
                 ArrayList<Tour> newPopulation;
@@ -165,7 +165,8 @@ public class Application {
                     result = bruteForce.getBestResult(population);
 
                     HSQLDBManager.instance.addFitnessToScenario(scenario.getId(), i, result);
-                    //HSQLDBManager.instance.writeCsv(scenario.getId());
+                    //HSQLDBManager.instance.checkTable(i);
+                    HSQLDBManager.instance.writeCsv(scenario.getId(),i);
                     System.out.println(scenario.getId() + ", " + i + ", " + result);
 
                 } catch (PopulationTooSmallException e) {
@@ -183,7 +184,7 @@ public class Application {
         } else {
             lastResutCounter = 0;
         }
-        if (lastResutCounter >= 1000) {
+        if (lastResutCounter >= 10000) {
             return false;
         }
         this.lastResult = result;

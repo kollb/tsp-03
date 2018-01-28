@@ -125,7 +125,7 @@ public class Statistics implements IStatistics {
         }
     }
 
-    public void writeCSVFile(String scenarioNumber, double[] values) {
+    public void writeCSVFile(String scenarioNumber, Double[] values) {
         PrintWriter writer = null;
         try {
             writer = new PrintWriter(new BufferedWriter(new FileWriter(globalPath + "scenario_" + scenarioNumber + ".csv")));
