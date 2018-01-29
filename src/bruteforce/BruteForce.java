@@ -3,7 +3,10 @@ package bruteforce;
 import base.City;
 import base.Population;
 import base.Tour;
+import data.InstanceReader;
+import data.TSPLIBReader;
 import main.Configuration;
+import main.Scenario;
 import random.MersenneTwisterFast;
 
 import java.util.ArrayList;
@@ -69,24 +72,23 @@ public class BruteForce {
     }
 
     public double getFitnessTop25(){
-        double populationFitness=1000000;
+        double bestResult=1000000;
 
         ArrayList<Tour> populationTours=population.getTours();
         int quarter=getPopulationSizeQuarter();
         for(int i=0;i<quarter;i++){
             Tour tour=populationTours.get(i);
-            if(tour.getFitness()< populationFitness){
-                populationFitness = tour.getFitness();
-
+            if(tour.getFitness()< bestResult){
+                bestResult = tour.getFitness();
             }
         }
 
 
-        return populationFitness;
+        return bestResult;
     }
 
     public double getFitnessLast25(){
-        double populationFitness=0;
+        double bestResult=10000;
 
         ArrayList<Tour> populationTours=population.getTours();
         int quarter=getPopulationSizeQuarter();
@@ -94,16 +96,18 @@ public class BruteForce {
         for(Tour tour:populationTours){
             int counter=quarter*3;
             while(counter<populationTours.size()){
-                populationFitness=populationFitness+tour.getFitness();
+                if(tour.getFitness()< bestResult){
+                    bestResult = tour.getFitness();
+                }
                 counter++;
             }
         }
 
-        return populationFitness;
+        return bestResult;
     }
 
     public double getFitnessMid50(){
-        double populationFitness=0;
+        double bestResult=100000;
 
         ArrayList<Tour> populationTours=population.getTours();
         int quarter=getPopulationSizeQuarter();
@@ -111,24 +115,28 @@ public class BruteForce {
         for(Tour tour:populationTours){
             int counter=quarter;
             while(counter<populationTours.size()-quarter){
-                populationFitness=populationFitness+tour.getFitness();
+                if(tour.getFitness()< bestResult){
+                    bestResult = tour.getFitness();
+                }
                 counter++;
             }
         }
 
-        return populationFitness;
+        return bestResult;
     }
 
-    public double getFitnessAll() {
-        double populationFitness = 0;
+    public double getFitnessAll(Population population) {
+        double bestResult = 100000;
 
         ArrayList<Tour> populationTours = population.getTours();
 
         for (Tour tour : populationTours) {
-            populationFitness = populationFitness + tour.getFitness();
+            if(tour.getFitness()< bestResult){
+                bestResult = tour.getFitness();
+            }
         }
 
-        return populationFitness;
+        return bestResult;
     }
 
 
@@ -153,10 +161,24 @@ public class BruteForce {
                 System.out.println("Mid-50% Percentile Fitness "+getFitnessMid50());
                 break;
             case "4":
-                System.out.println("Fitness data All:  "+ getFitnessAll());
+                System.out.println("Fitness data All:  "+ getFitnessAll(population));
                 break;
             default:
                 System.out.println("Wrong Option");
         }
+    }
+
+    public static void main (String args[]){
+        BruteForce bruteForce=new BruteForce();
+        Population population=new Population();
+        ArrayList<City> availableCities;
+        InstanceReader instanceReader = new InstanceReader(Configuration.instance.dataFilePath);
+        instanceReader.open();
+        TSPLIBReader tspLibReader = new TSPLIBReader(instanceReader);
+        availableCities = tspLibReader.getCities();
+        Scenario scenario=new Scenario();
+        long permutationsNumber = scenario.getMaximumNumberOfEvaluations();
+        population=bruteForce.createPermutations(availableCities,permutationsNumber);
+        System.out.println(bruteForce.getFitnessAll(population));
     }
 }
