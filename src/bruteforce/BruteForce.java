@@ -47,18 +47,17 @@ public class BruteForce {
     public Tour generateTour(ArrayList<City> cityArrayList){
 
         Tour newTour=new Tour();
-        ArrayList<Tour> cityListClone=new ArrayList<>();
+        HashSet<Tour> cityListClone=new HashSet<>();
+
+        int random=0;
 
         for(int i=0;i<cityArrayList.size();i++) {
-
-            int random1 = mtwister.nextInt(0, cityArrayList.size()-2);
-            int random2 = mtwister.nextInt(0, cityArrayList.size()-2);
-
-            Collections.swap(cityArrayList,random1,random2);
-
-            newTour.addCity(cityArrayList.get(random1));
-            newTour.addCity(cityArrayList.get(random2));
+            do {
+                random = mtwister.nextInt(0, cityArrayList.size()-1);
+            } while (newTour.containsCity(cityArrayList.get(random)));
+            newTour.addCity(cityArrayList.get(random));
         }
+
         return newTour;
     }
 
@@ -132,15 +131,7 @@ public class BruteForce {
         return populationFitness;
     }
 
-    public double getBestResult(Population population){
-        double bestResult=90000000;
-        for (Tour tour : population.getTours()){
-            if(tour.getFitness()< bestResult){
-                bestResult = tour.getFitness();
-            }
-        }
-        return bestResult;
-    }
+
 
     public void evaluateFitness(){
         Scanner scan = new Scanner(System.in);
