@@ -9,6 +9,7 @@ import data.HSQLDBManager;
 import data.InstanceReader;
 import data.TSPLIBReader;
 import mutation.*;
+import random.MersenneTwisterFast;
 import selection.ISelection;
 import selection.PopulationTooSmallException;
 import selection.RouletteWheelSelection;
@@ -23,7 +24,6 @@ public class Application {
     private double[][] distances;
 
     private double lastResult;
-    private int lastResutCounter = 0;
 
     private ISelection selection;
     private ICrossover crossover;
@@ -143,69 +143,102 @@ public class Application {
             System.out.println(" Selection Type: "+ scenario.getSelection());
             System.out.println("-------------------");
             long startTime = System.currentTimeMillis();
-            for (int i = 0; i < 10000; i++) {
+            double bestResult = 80000;
+            int iterationsCounter=1;
+            //System.out.println("Before do-while");
+            double bruteForceResult=0;
+            if(scenario.getIsEvaluated()){
+                Population bruteForcePopulation = new Population();
+                long permutationsNumber = Long.parseUnsignedLong("400000");
+                bruteForceResult = bruteForceResult(permutationsNumber);
+            }
 
-
-                double result = 0;
-                if(gosForward(result)&&isSolutionQualityReached(result)){
+                do {
+                    double result = 0;
                     ArrayList<Tour> newPopulation;
                     ArrayList<Tour> parents;
 
                     newPopulation = population.getTours();
-
+                    // System.out.println("Before try-catch");
                     try {
                         parents = selection.doSelection(population);
+                        //System.out.println("Before for");
+                        MersenneTwisterFast mtwister=(MersenneTwisterFast) Configuration.instance.random;
+                        if(mtwister.nextBoolean(scenario.getCrossoverRatio())){
+                            for (int j = 1; j < 26; j = j + 2) {
+                                Tour child1 = crossover.doCrossover(parents.get(j), parents.get(j - 1));
+                                Tour child2 = crossover.doCrossover(parents.get(j), parents.get(j - 1));
+                                newPopulation.add(child1);
+                                newPopulation.add(child2);
+                            }
+                        }
+                        //   System.out.println("After for");
 
-/*
-                    for (int j = 1; j < 26; j = j + 2) {
-                        Tour child1 = crossover.doCrossover(parents.get(j), parents.get(j - 1));
-                        Tour child2 = crossover.doCrossover(parents.get(j), parents.get(j - 1));
-                        System.out.println("JUSTUS");
-                        newPopulation.add(child1);
-                        newPopulation.add(child2);
-                        System.out.println("JUSTUuuuuuuuuuuuuuuS");
-                    }
-*/
-
-
-                        newPopulation = mutation.doMutation(newPopulation,scenario.getMutationRatio());
+                        newPopulation = mutation.doMutation(newPopulation, scenario.getMutationRatio());
 
                         population.setTours(newPopulation);
-                        result = Math.round(bruteForce.getBestResult(population)*100.0)/100.0;
+                        result = this.getBestResult(population);
 
-                        HSQLDBManager.instance.addFitnessToScenario(scenario.getId(), i, result);
+                        if (result < bestResult) {
+                            bestResult = result;
+                        }
+                        // System.out.println("After result");
+                        HSQLDBManager.instance.addFitnessToScenario(scenario.getId(), iterationsCounter, result);
 /*                    if (i == 750) {
                         HSQLDBManager.instance.checkTable(i);
                     }*/
-                        if (i == 999) {
-                            HSQLDBManager.instance.writeCsv(scenario.getId(), i);
+                        lastResult = result;
+                        if (iterationsCounter == 1) {
+                            System.out.println("Iteration: " + iterationsCounter + " Starting with value: " + Math.round(result));
                         }
-                        if (i % 2500  == 0) {
-                            System.out.println("Iteration: " + i + " Best Result: "+ result );
+                        if (iterationsCounter % 1000 == 0) {
+                            System.out.println("Iteration: " + iterationsCounter + " Best value: " + Math.round(bestResult) + " Population Size: " + newPopulation.size());
                         }
+                        if (iterationsCounter == 100) {
+                            HSQLDBManager.instance.writeCsv(scenario.getId(), iterationsCounter);
+                        }
+
                     } catch (PopulationTooSmallException e) {
                         e.printStackTrace();
                     }
-                }
-                if (i==9999) {
-                    long endTime = System.currentTimeMillis();
-                    System.out.println("Runtime " + (endTime - startTime)/1000 + " Seconds");
-                }
-            }
+                    //  System.out.println("After catch");
+                    if (iterationsCounter == 10000) {
+                        long endTime = System.currentTimeMillis();
+                        System.out.println("Runtime " + (endTime - startTime) / 1000 + " Seconds");
+                    }
+                    iterationsCounter++;
+
+                } while (!isSolutionQualityReached(bestResult) && iterationsCounter <= 100);
+                System.out.println("BruteForce Best Result : "+Math.round(bruteForceResult)+" Algorithm Best Result "+Math.round(bestResult));
+
         }
     }
 
-    public boolean gosForward(double result) {
-        if (Math.abs(lastResult - result) < 0.00001) {
-            lastResutCounter++;
-        } else {
-            lastResutCounter = 0;
+    public double getBestResult(Population population){
+        double bestResult=1000000;
+        for (Tour tour : population.getTours()){
+            if(tour.getFitness()< bestResult){
+                bestResult = tour.getFitness();
+            }
         }
-        if (lastResutCounter >= 10000) {
-            return false;
+        return bestResult;
+    }
+
+    public int getWorstResultIndex(Population population){
+        double worstResult=0;
+        int counter=0;
+        for (Tour tour : population.getTours()){
+            if(tour.getFitness()> worstResult) {
+                worstResult = tour.getFitness();
+            }
         }
-        this.lastResult = result;
-        return true;
+        for(Tour tour : population.getTours()){
+            if(tour.getFitness()==worstResult){
+                return counter;
+            }
+            else counter++;
+        }
+        return 0;
     }
 
     private boolean isSolutionQualityReached(double quality) {
@@ -224,8 +257,14 @@ public class Application {
         return populationFitness;
     }
 
+    public double bruteForceResult(long permutationsNumber){
+        BruteForce bruteForce = new BruteForce();
+        Population population = bruteForce.createPermutations(availableCities,permutationsNumber);
+        return bruteForce.getFitnessAll(population);
+    }
+
     public static void main(String... args) {
-        long permutationsNumber = Long.parseUnsignedLong("280");
+        long permutationsNumber = Long.parseUnsignedLong("100");
         Application application = new Application();
         application.startupHSQLDB();
         application.loadData();
@@ -233,7 +272,7 @@ public class Application {
         Population population = bruteForce.createPermutations(availableCities, permutationsNumber);
         Scenario[] scenarios = application.initConfiguration();
         application.execute(scenarios, population);
-        bruteForce.evaluateFitness();
+       // bruteForce.evaluateFitness();
         application.shutdownHSQLDB();
     }
 }
