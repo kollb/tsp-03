@@ -15,8 +15,8 @@ public class ExchangeMutation implements IMutation {
         for (Tour tour : tours) {
             if (randomGenerator.nextBoolean(mutationRatio)) { 
                 int arrayLength = tour.getSize();
-                int random1 = randomGenerator.nextInt(0, arrayLength);
-                int random2 = randomGenerator.nextInt(0, arrayLength);
+                int random1 = randomGenerator.nextInt(arrayLength);
+                int random2 = randomGenerator.nextInt(arrayLength);
                 City tempCity1 = tour.getCity(random1);
                 City tempCity2 = tour.getCity(random2);
                 tour.addCity(random1, tempCity2);
