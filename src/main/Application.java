@@ -85,7 +85,8 @@ public class Application {
     }
 
     public void execute(Scenario[] scenarios, Population population) {
-        BruteForce bruteForce = new BruteForce();
+        int iterationsMax = Configuration.instance.iterationsMaximum;
+
         for (Scenario scenario : scenarios) {
 
             switch (scenario.getSelection()) {
@@ -145,10 +146,8 @@ public class Application {
             long startTime = System.currentTimeMillis();
             double bestResult = 80000;
             int iterationsCounter=1;
-            //System.out.println("Before do-while");
             double bruteForceResult=0;
             if(scenario.getIsEvaluated()){
-                Population bruteForcePopulation = new Population();
                 long permutationsNumber = Long.parseUnsignedLong("400000");
                 bruteForceResult = bruteForceResult(permutationsNumber);
             }
@@ -159,10 +158,8 @@ public class Application {
                     ArrayList<Tour> parents;
 
                     newPopulation = population.getTours();
-                    // System.out.println("Before try-catch");
                     try {
                         parents = selection.doSelection(population);
-                        //System.out.println("Before for");
                         MersenneTwisterFast mtwister=(MersenneTwisterFast) Configuration.instance.random;
                         if(mtwister.nextBoolean(scenario.getCrossoverRatio())){
                             for (int j = 1; j < 26; j = j + 2) {
@@ -172,7 +169,6 @@ public class Application {
                                 newPopulation.add(child2);
                             }
                         }
-                        //   System.out.println("After for");
 
                         newPopulation = mutation.doMutation(newPopulation, scenario.getMutationRatio());
 
@@ -182,7 +178,6 @@ public class Application {
                         if (result < bestResult) {
                             bestResult = result;
                         }
-                        // System.out.println("After result");
                         HSQLDBManager.instance.addFitnessToScenario(scenario.getId(), iterationsCounter, result);
 /*                    if (i == 750) {
                         HSQLDBManager.instance.checkTable(i);
@@ -191,24 +186,23 @@ public class Application {
                         if (iterationsCounter == 1) {
                             System.out.println("Iteration: " + iterationsCounter + " Starting with value: " + Math.round(result));
                         }
-                        if (iterationsCounter % 1000 == 0) {
+                        if (iterationsCounter % (iterationsMax/4) == 0) {
                             System.out.println("Iteration: " + iterationsCounter + " Best value: " + Math.round(bestResult) + " Population Size: " + newPopulation.size());
                         }
-                        if (iterationsCounter == 100) {
+                        if (iterationsCounter == iterationsMax) {
                             HSQLDBManager.instance.writeCsv(scenario.getId(), iterationsCounter);
                         }
 
                     } catch (PopulationTooSmallException e) {
                         e.printStackTrace();
                     }
-                    //  System.out.println("After catch");
-                    if (iterationsCounter == 10000) {
+                    if (iterationsCounter == iterationsMax) {
                         long endTime = System.currentTimeMillis();
                         System.out.println("Runtime " + (endTime - startTime) / 1000 + " Seconds");
                     }
                     iterationsCounter++;
 
-                } while (!isSolutionQualityReached(bestResult) && iterationsCounter <= 100);
+                } while (!isSolutionQualityReached(bestResult) && iterationsCounter <= iterationsMax);
                 System.out.println("BruteForce Best Result : "+Math.round(bruteForceResult)+" Algorithm Best Result "+Math.round(bestResult));
 
         }

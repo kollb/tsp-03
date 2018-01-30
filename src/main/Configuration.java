@@ -21,5 +21,7 @@ public enum Configuration {
 
     public int TOURNAMENT_SELECT_COUNT = 26;
 
+    public int iterationsMaximum = 10000;
+
     public Random random = new MersenneTwisterFast();
 }
