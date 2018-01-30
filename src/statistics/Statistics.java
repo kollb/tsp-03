@@ -1,5 +1,7 @@
 package statistics;
 
+import main.Configuration;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -7,7 +9,7 @@ import java.io.PrintWriter;
 
 public class Statistics implements IStatistics {
 
-    private String globalPath = "O://Software Engineering/01_teil_01/03_implementierung/03_training/02_workspace/_templates/01_tsp/src/statistics/";
+    private String globalPath = Configuration.instance.statisticsDirectory;
     private String[] scenarios;
 
     private boolean median = false;
