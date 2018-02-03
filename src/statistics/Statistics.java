@@ -1,10 +1,12 @@
 package statistics;
 
+import main.Configuration;
+
 import java.io.*;
 
 public class Statistics implements IStatistics {
 
-    private String globalPath = "O://Software Engineering/01_teil_01/03_implementierung/03_training/02_workspace/_templates/01_tsp/src/statistics/";
+    private String globalPath = Configuration.instance.statisticsDirectory;
     private String[] scenarios;
 
     private boolean median = false;
@@ -127,7 +129,7 @@ public class Statistics implements IStatistics {
         buildMostFrequentFitnessValuesRFile();
     }
 
-    public void writeCSVFile(String scenarioNumber, double[] values) {
+    public void writeCSVFile(String scenarioNumber, Double[] values) {
         PrintWriter writer = null;
                 try {
                     writer = new PrintWriter(new BufferedWriter(new FileWriter(globalPath + "scenario_s" + scenarioNumber + ".csv")));
