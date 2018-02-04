@@ -63,11 +63,19 @@ public class OrderedCrossover implements ICrossover {
             if (i == minBorder) {
                 i += (maxBorder + 1 - minBorder);
             }
-            while (child.containsCity(parent.get(0))) {
-                parent.remove(0);
-            }
+                while (parent.size() > 0 && child.containsCity(parent.get(0))) {
+                    parent.remove(0);
+                }
+            if (parent.size()>0) {
             child.addCity(i, parent.get(0));
             parent.remove(0);
+            }
+/*            if (parent.size() == 0){
+                for (int p = 0; p < child.getSize(); p++) {
+                    if (child.getCity(p).getId() == 0)
+                        System.err.println("Child is not Finished! Ordered Crossover");
+                }
+            }*/
         }
     }
 }

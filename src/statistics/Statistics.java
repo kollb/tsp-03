@@ -1,13 +1,12 @@
 package statistics;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import main.Configuration;
+
+import java.io.*;
 
 public class Statistics implements IStatistics {
 
-    private String globalPath = "O://Software Engineering/01_teil_01/03_implementierung/03_training/02_workspace/_templates/01_tsp/src/statistics/";
+    private String globalPath = Configuration.instance.statisticsDirectory;
     private String[] scenarios;
 
     private boolean median = false;
@@ -29,115 +28,120 @@ public class Statistics implements IStatistics {
 
     private boolean mff = false;
 
-    // TODO: IntelliJ sagt 13 mal in dieser Datei: "String concatenation '+' in loop".
-    // TODO: Wir sollten überall StringBuilder verwenden. IntelliJ kann das automatisch ändern.
 
-    public void start(String... args) {
-        if (args[0].equals("-d")) {
-            int index = 0;
-            while (args.length != (index + 2) && args[index + 1].charAt(0) != '-') index++;
-            scenarios = new String[index];
-            for (int i = 0; i < index; i++) scenarios[i] = args[i + 1];
-            index++;
+    public void start(String... args){
+        try{
+            if(args[0].equals("-d")) {
+                int index = 1;
 
-            //case -m
-            if (args.length != (index + 2) && args[index].equals("-m")) {
-                while (args.length != (index + 2) && args[index + 1].charAt(0) != '-') {
+                //Anzahl der Szenarios ermitteln
+                while(args[index].charAt(0) != '-') index++;
+                scenarios = new String[index - 1];
+                for(int i = 0; i < scenarios.length; i++) scenarios[i] = args[i+1];
+
+                //case -m
+                if (args[index].equals("-m")) {
                     index++;
-                    switch (args[index]) {
-                        case "median":
-                            median = true;
-                            break;
-                        case "mean":
-                            mean = true;
-                            break;
-                        case "sd":
-                            sd = true;
-                            break;
-                        case "quantile=0.25":
-                            quantile25 = true;
-                            break;
-                        case "quantile=0.25,0.75":
-                            quantile75 = true;
-                            break;
-                        case "quantile=0.25-0.75":
-                            quantile2575 = true;
-                            break;
-                        case "range":
-                            range = true;
-                            break;
-                        case "iqr":
-                            iqr = true;
-                            break;
-                        default:
-                            break;
+                    while (args[index].charAt(0) != '-') {
+                        switch (args[index]) {
+                            case "median":
+                                median = true;
+                                break;
+                            case "mean":
+                                mean = true;
+                                break;
+                            case "sd":
+                                sd = true;
+                                break;
+                            case "quantile=0.25":
+                                quantile25 = true;
+                                break;
+                            case "quantile=0.25,0.75":
+                                quantile75 = true;
+                                break;
+                            case "quantile=0.25-0.75":
+                                quantile2575 = true;
+                                break;
+                            case "range":
+                                range = true;
+                                break;
+                            case "iqr":
+                                iqr = true;
+                                break;
+                            default:
+                                break;
+                        }
+                        index++;
                     }
                 }
-                index++;
-            }
 
-            //case -p
-            if (args.length != (index + 2) && args[index].equals("-p")) {
-                while (args.length != (index + 2) && args[index + 1].charAt(0) != '-') {
+                //case -p
+                if (args[index].equals("-p")) {
                     index++;
-                    switch (args[index]) {
-                        case "bar":
-                            bar = true;
-                            break;
-                        case "box":
-                            box = true;
-                            break;
-                        case "dot":
-                            dot = true;
-                            break;
-                        case "hist":
-                            hist = true;
-                            break;
-                        case "strip":
-                            strip = true;
-                            break;
-                        default:
-                            break;
+                    while (args[index].charAt(0) != '-') {
+                        switch (args[index]) {
+                            case "bar":
+                                bar = true;
+                                break;
+                            case "box":
+                                box = true;
+                                break;
+                            case "dot":
+                                dot = true;
+                                break;
+                            case "hist":
+                                hist = true;
+                                break;
+                            case "strip":
+                                strip = true;
+                                break;
+                            default:
+                                break;
+                        }
+                        index++;
                     }
                 }
-                index++;
-            }
 
-            //case -t
-            if (args.length != (index + 2) && args[index].equals("-t")) {
-                test = true;
-                index++;
-            }
+                //case -t
+                if (args[index].equals("-t")) {
+                    test = true;
+                    index++;
+                }
 
-            //case -a
-            if (args.length != (index + 2) && args[index].equals("-mff")) {
-                mff = true;
+                //case -a
+                if (args[index].equals("-a")) {
+                    mff = true;
+                }
             }
-
-            buildMeasureRFile();
-            buildBarPlotFile();
-            buildBoxPlotRFile();
-            buildDotPlotRFile();
-            buildStripChartRFile();
-            buildTTestRFile();
-            buildHistogramRFile();
-            buildMostFrequentFitnessValuesRFile();
+        } catch (IndexOutOfBoundsException e){
+            System.out.println("Falsche Parameter!");
         }
+
+        for(int i = 0; i<scenarios.length; i++) System.out.println(scenarios[i]);
+
+        buildMeasureRFile();
+        buildBarPlotFile();
+        buildBoxPlotRFile();
+        buildDotPlotRFile();
+        buildStripChartRFile();
+        buildTTestRFile();
+        buildHistogramRFile();
+        buildMostFrequentFitnessValuesRFile();
     }
 
     public void writeCSVFile(String scenarioNumber, Double[] values) {
         PrintWriter writer = null;
-        try {
-            writer = new PrintWriter(new BufferedWriter(new FileWriter(globalPath + "scenario_" + scenarioNumber + ".csv")));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+                try {
+                    writer = new PrintWriter(new BufferedWriter(new FileWriter(globalPath + "scenario_s" + scenarioNumber + ".csv")));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
-        for (double value : values) {
-            writer.format("" + value);
-            writer.println();
-        }
-        writer.close();
+                for (int i = 0; i < values.length; i++) {
+                    writer.format("" + values[i]);
+                    writer.println();
+                }
+                writer.close();
     }
 
     public void buildMeasureRFile() {
@@ -151,21 +155,21 @@ public class Statistics implements IStatistics {
                 "setwd(\"" + globalPath + "\")\n" +
                 "getwd()\n\n");
 
-        for (int i = 0; i < scenarios.length; i++) {
-            writer.format("s" + i + " <- as.numeric(read.csv(\"scenario_" + scenarios[i] + ".csv\",header=FALSE))\n");
+        for (int i = 1; i <= scenarios.length; i++) {
+            writer.format("s" + i + " <- as.numeric(read.csv(\"scenario_" + scenarios[i-1] + ".csv\",header=FALSE))\n");
         }
 
         //writes median
         if (median) {
             writer.format("\n# median\n");
-            String strMedian;
+            String strMedian = "";
             if (scenarios.length == 1) strMedian = "median(s01)";
             else {
                 strMedian = "c(";
                 for (int i = 0; i < (scenarios.length - 1); i++) {
-                    strMedian = strMedian + "median(s" + scenarios[i] + "),";
+                    strMedian = strMedian + "median(" + scenarios[i] + "),";
                 }
-                strMedian = strMedian + "median(s" + scenarios[scenarios.length - 1] + "))";
+                strMedian = strMedian + "median(" + scenarios[scenarios.length - 1] + "))";
             }
             writer.format(strMedian + "\n");
         }
@@ -173,14 +177,14 @@ public class Statistics implements IStatistics {
         //writes mean
         if (mean) {
             writer.format("\n# mean\n");
-            String strMean;
+            String strMean = "";
             if (scenarios.length == 1) strMean = "round(mean(s01),digits = 2)";
             else {
                 strMean = "c(";
-                for (int i = 0; i < (scenarios.length - 1); i++) {
-                    strMean = strMean + "round(mean(s" + scenarios[i] + "),digits = 2),";
+                for (int i = 0; i < (scenarios.length -1) ; i++) {
+                    strMean = strMean + "round(mean(" + scenarios[i] + "),digits = 2),";
                 }
-                strMean = strMean + "round(mean(s" + scenarios[scenarios.length - 1] + "),digits = 2))";
+                strMean = strMean + "round(mean(" + scenarios[scenarios.length - 1] + "),digits = 2))";
             }
             writer.format(strMean + "\n");
         }
@@ -188,14 +192,14 @@ public class Statistics implements IStatistics {
         //writes sd
         if (sd) {
             writer.format("\n# sd\n");
-            String strSd;
+            String strSd = "";
             if (scenarios.length == 1) strSd = "round(sd(s01),digits = 2)";
             else {
                 strSd = "c(";
                 for (int i = 0; i < (scenarios.length - 1); i++) {
-                    strSd = strSd + "round(sd(s" + scenarios[i] + "),digits = 2),";
+                    strSd = strSd + "round(sd(" + scenarios[i] + "),digits = 2),";
                 }
-                strSd = strSd + "round(sd(s" + scenarios[scenarios.length - 1] + "), digits = 2))";
+                strSd = strSd + "round(sd(" + scenarios[scenarios.length - 1] + "), digits = 2))";
             }
             writer.format(strSd + "\n");
         }
@@ -205,51 +209,44 @@ public class Statistics implements IStatistics {
             writer.format("\n# quantile\n");
 
             if (quantile25) {
-                String strQuantile;
+                String strQuantile = "";
                 if (scenarios.length == 1) strQuantile = "quantile(s01,0.25)";
                 else {
                     strQuantile = "c(";
                     for (int i = 0; i < (scenarios.length - 1); i++) {
-                        strQuantile = strQuantile + "quantile(s" + scenarios[i] + ",0.25),";
+                        strQuantile = strQuantile + "quantile(" + scenarios[i] + ",0.25),";
                     }
-                    strQuantile = strQuantile + "quantile(s" + scenarios[scenarios.length - 1] + ",0.25))";
+                    strQuantile = strQuantile + "quantile(" + scenarios[scenarios.length - 1] + ",0.25))";
                 }
                 writer.format(strQuantile + "\n\n");
             }
 
             if (quantile75) {
-                for (String scenario : scenarios) {
-                    writer.format("quantile(s" + scenario + ",probs = c(0.25,0.75))\n");
-                }
+                for (int i = 0; i < scenarios.length; i++) writer.format("quantile(" + scenarios[i] + ",probs = c(0.25,0.75))\n");
                 writer.format("\n");
             }
 
-            if (quantile2575) {
-                for (String scenario : scenarios) {
-                    writer.format("quantile(s" + scenario + ",probs = c(0.25,0.50,0.75))\n");
-                }
-            }
+            if (quantile2575) for (int i = 0; i < scenarios.length; i++)
+                writer.format("quantile(" + scenarios[i] + ",probs = c(0.25,0.50,0.75))\n");
         }
 
         if (range) {
             //writes range
             writer.format("\n# range\n");
-            for (String scenario : scenarios) {
-                writer.format("c(max(s" + scenario + ") − min(s" + scenario + "))\n");
-            }
+            for (int i = 0; i < scenarios.length; i++) writer.format("c(max(" + scenarios[i] + ") - min(" + scenarios[i] + "))\n");
         }
 
-        if (iqr) {
-            //writes interquartile range
-            writer.format("\n# interquartile range\n");
-            String strIR;
+        if (iqr){
+                //writes interquartile range
+                writer.format("\n# interquartile range\n");
+            String strIR = "";
             if (scenarios.length == 1) strIR = "quantile(s01,0.75) - quantile(s01,0.25)";
             else {
                 strIR = "c(";
                 for (int i = 0; i < (scenarios.length - 1); i++) {
-                    strIR = strIR + "quantile(s" + scenarios[i] + ",0.75) - quantile(s" + scenarios[i] + ",0.25),";
+                    strIR = strIR + "quantile("+ scenarios[i] + ",0.75) - quantile(" + scenarios[i] + ",0.25),";
                 }
-                strIR = strIR + "quantile(s" + scenarios.length + ",0.75) - quantile(s" + scenarios.length + ",0.25))";
+                strIR = strIR + "quantile(" + scenarios.length + ",0.75) - quantile(" + scenarios.length + ",0.25))";
             }
             writer.format(strIR + "\n");
         }
@@ -259,7 +256,7 @@ public class Statistics implements IStatistics {
     }
 
     public void buildBarPlotFile() {
-        if (bar) {
+        if (bar){
             double fitness[] = {1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5};
             PrintWriter writer = null;
             try {
@@ -269,18 +266,18 @@ public class Statistics implements IStatistics {
             }
             writer.format("setwd(\"" + globalPath + "\")\n" +
                     "getwd()\n\n");
-            writer.format("pdf(\"plots/example_scenario_01.pdf\",height = 10,width = 10,paper = \"A4r\")\n\n");
+            writer.format("pdf(\"plots/barplot_scenario_01.pdf\",height = 10,width = 10,paper = \"A4r\")\n\n");
 
             for (int i = 0; i < (scenarios.length - 1); i++) {
-                writer.format("s" + scenarios[i] + " <- c(");
-                for (double fitnes : fitness) {
-                    writer.format("round(" + fitness[fitness.length - 1] + "/" + fitnes + ",digits=2)*100,");
+                writer.format( scenarios[i] + " <- c(");
+                for (int j = 0; j < fitness.length; j++) {
+                    writer.format("round(" + fitness[fitness.length - 1] + "/" + fitness[j] + ",digits=2)*100,");
                 }
                 writer.format("round(" + fitness[fitness.length - 1] + "/" + fitness[fitness.length - 1] + ",digits=2)*100)\n\n");
             }
 
             String strScenarios = "";
-            for (int i = 0; i < (scenarios.length - 1); i++) strScenarios = strScenarios + "s" + scenarios[i] + ",";
+            for (int i = 0; i < (scenarios.length - 1); i++) strScenarios = strScenarios + scenarios[i] + ",";
             writer.format("barplot(" + strScenarios + "ylim=c(0,100),col=\"black\",ylab = \"solution quality (%%)\",xlab = \"iterations\",width = 0.1,main = \"Genetic Algorithms - TSP280 - Scenario 1\")\n\n");
 
             writer.format("dev.off()");
@@ -309,7 +306,7 @@ public class Statistics implements IStatistics {
 
             for (int i = 0; i < (scenarios.length - 1); i++) {
                 count = count + "_" + scenarios[i];
-                scount = scount + "s" + scenarios[i] + ",";
+                scount = scount + scenarios[i] + ",";
                 sccount = sccount + "\"Scenario " + scenarios[i] + "\",";
             }
             scount = scount.substring(0, scount.length() - 1);
@@ -338,13 +335,13 @@ public class Statistics implements IStatistics {
                     "getwd()\n\n");
 
             for (int i = 0; i < (scenarios.length - 1); i++) {
-                writer.format("s" + scenarios[i] + " <- as.numeric(read.csv(\"scenario_" + scenarios[i] + ".csv\",header=FALSE))\n");
+                writer.format(scenarios[i] + " <- as.numeric(read.csv(\"scenario_" + scenarios[i] + ".csv\",header=FALSE))\n");
             }
 
             writer.format("\npdf(\"plots/example_scenario01_dotplot.pdf\",height = 10,width = 10,paper = \"A4r\")\n\n");
 
             String strScenarios = "";
-            for (int i = 0; i < (scenarios.length - 1); i++) strScenarios = strScenarios + "s" + scenarios[i] + ",";
+            for (int i = 0; i < (scenarios.length - 1); i++)  strScenarios = strScenarios + scenarios[i] + ",";
             writer.format("plot(" + strScenarios + "col=\"black\",ylab = \"distance\",xlab = \"iterations\",cex = 0.1,main = \"Genetic Algorithms - TSP280 - Scenario 01\")\n\n");
 
             writer.format("dev.off()");
@@ -365,13 +362,13 @@ public class Statistics implements IStatistics {
                     "getwd()\n\n");
 
             for (int i = 0; i < (scenarios.length - 1); i++) {
-                writer.format("s" + scenarios[i] + " <- as.numeric(read.csv(\"scenario_" + scenarios[i] + ".csv\",header=FALSE))\n");
+                writer.format(scenarios[i] + " <- as.numeric(read.csv(\"scenario_" + scenarios[i] + ".csv\",header=FALSE))\n");
             }
 
             writer.format("\npdf(\"plots/example_scenario01_stripchart.pdf\",height = 10,width = 10,paper = \"A4r\")\n\n");
 
             String strScenarios = "";
-            for (int i = 0; i < (scenarios.length - 1); i++) strScenarios = strScenarios + "s" + scenarios[i] + ",";
+            for (int i = 0; i < (scenarios.length - 1); i++)  strScenarios = strScenarios + scenarios[i] + ",";
             writer.format("stripchart(" + strScenarios + "xlim=c(2500,5000),main = \"Genetic Algorithms - TSP280 - Scenario 01\",method=\"stack\")\n\n");
 
             writer.format("dev.off()");
@@ -392,27 +389,25 @@ public class Statistics implements IStatistics {
                     "setwd(\"" + globalPath + "\")\n" +
                     "getwd()\n\n");
 
-            for (int i = 0; i < (scenarios.length - 1); i++) {
-                writer.format("s" + scenarios[i] + " <- as.numeric(read.csv(\"scenario_" + scenarios[i] + ".csv\",header=FALSE))\n");
+            for (int i = 0; i < scenarios.length; i++) {
+                writer.format(scenarios[i] + " <- as.numeric(read.csv(\"scenario_" + scenarios[i] + ".csv\",header=FALSE))\n");
             }
 
-            String strMean;
-            if (scenarios.length == 1) {
-                strMean = "mean(s01)";
-            } else {
+            String strMean = "";
+            if (scenarios.length == 1) strMean = "mean(s1)";
+            else {
                 strMean = "c(";
-                for (int i = 0; i < (scenarios.length - 1); i++) {
-                    strMean = strMean + "mean(s" + scenarios[i] + "),";
+                for (int i = 0; i < scenarios.length - 1; i++) {
+                    strMean = strMean + "mean(" + scenarios[i] + "),";
                 }
-                // TODO: strMean is not used! Probably a bug
-                strMean = strMean + "mean(s" + scenarios[scenarios.length - 1] + "))";
+                strMean = strMean + "mean(" + scenarios[scenarios.length-1] + "))";
             }
+            writer.format("\n" + strMean);
 
             String strScenarios = "";
-            for (int i = 0; i < (scenarios.length - 1); i++) {
-                strScenarios = strScenarios + "s" + scenarios[i] + ",";
-            }
-            writer.format("\ntest(" + strScenarios + " s" + scenarios[scenarios.length - 1] + ")");
+            for (int i = 0; i < scenarios.length; i++)  strScenarios = strScenarios + scenarios[i] + ",";
+            strScenarios = strScenarios.substring(0, strScenarios.length() -1);
+            writer.format("\ntest(" + strScenarios + ")");
 
             writer.close();
         }
@@ -431,13 +426,13 @@ public class Statistics implements IStatistics {
                     "getwd()\n\n");
 
             for (int i = 0; i < (scenarios.length - 1); i++) {
-                writer.format("s" + scenarios[i] + " <- as.numeric(read.csv(\"scenario_" + scenarios[i] + ".csv\",header=FALSE))\n");
+                writer.format(scenarios[i] + " <- as.numeric(read.csv(\"scenario_" + scenarios[i] + ".csv\",header=FALSE))\n");
             }
 
             writer.format("\npdf(\"plots/example_scenario01_histogram.pdf\",height = 10,width = 10,paper = \"A4r\")\n\n");
 
             String strScenarios = "";
-            for (int i = 0; i < (scenarios.length - 1); i++) strScenarios = strScenarios + "s" + scenarios[i] + ",";
+            for (int i = 0; i < (scenarios.length - 1); i++)  strScenarios = strScenarios + scenarios[i] + ",";
             writer.format("hist(" + strScenarios + "xlim=c(2500,5000),ylim=c(0,200),xlab = \"distance\",breaks=100,main = \"Genetic Algorithms - TSP280\")\n\n");
 
             writer.format("dev.off()");
@@ -459,15 +454,19 @@ public class Statistics implements IStatistics {
                     "getwd()\n\n");
 
             for (int i = 0; i < (scenarios.length - 1); i++) {
-                writer.format("s" + scenarios[i] + " <- as.numeric(read.csv(\"scenario_" + scenarios[i] + ".csv\",header=FALSE))\n");
+                writer.format(scenarios[i] + " <- as.numeric(read.csv(\"scenario_" + scenarios[i] + ".csv\",header=FALSE))\n");
             }
 
             writer.format("\n# most frequent fitness\n");
-            for (int i = 0; i < (scenarios.length - 1); i++)
-                writer.format("sort(table(s" + scenarios[i] + "),decreasing=TRUE)[1]\n");
+            for (int i = 0; i < (scenarios.length - 1); i++) writer.format("sort(table(" + scenarios[i] + "),decreasing=TRUE)[1]\n");
 
             writer.close();
         }
     }
 
+
+    public static void main(String... args) {
+        Statistics statistics = new Statistics();
+        statistics.start(args);
+    }
 }
