@@ -34,7 +34,6 @@ public class InversionMutation implements IMutation {
                     tour.addCity(start, aTourTemp);
                     start++;
                 }
-                System.out.println(tour.getCities().toString());
             }
         }
 
