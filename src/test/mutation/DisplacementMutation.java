@@ -19,6 +19,7 @@ public class DisplacementMutation {
     @Before
     public void testSetup() {
         mutation = new mutation.DisplacementMutation();
+        mutationRatio = 1.0;
         tour = new Tour();
         for (int i = 1; i <= 280; i++) {
             tour.addCity(new City(i, i, i));
@@ -62,5 +63,14 @@ public class DisplacementMutation {
         ArrayList<Tour> result = mutation.doMutation(tours,mutationRatio);
         HashSet<City> resultSet = new HashSet<>(result.remove(0).getCities());
         assertEquals(280, resultSet.size());
+    }
+
+    @Test
+    public void checkIfSomethingChanged() {
+        ArrayList<City> cities = tour.getCities();
+        double fitnessBeforeMutation = tour.getFitness();
+        ArrayList<Tour> result = mutation.doMutation(tours, mutationRatio);
+        cities = result.get(0).getCities();
+        assertNotEquals(fitnessBeforeMutation, result.remove(0).getFitness());
     }
 }
