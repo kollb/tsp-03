@@ -3,182 +3,168 @@ package bruteforce;
 import base.City;
 import base.Population;
 import base.Tour;
-import data.InstanceReader;
-import data.TSPLIBReader;
 import main.Configuration;
-import main.Scenario;
 import random.MersenneTwisterFast;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Scanner;
+import java.util.*;
+import java.util.Map.Entry;
 
 public class BruteForce {
-    /*
-    private TSPLIBReader tspReader;
-    private InstanceReader instReader;
-    private ArrayList<Double> resultList;
-    */
+
 
     private MersenneTwisterFast mtwister = (MersenneTwisterFast) Configuration.instance.random;
-    private Population population=new Population();
 
-    /*
-    public BruteForce(TSPLIBReader x, InstanceReader y) {
-        this.tspReader = x;
-        this.instReader = y;
-    }
-    */
-
-    public Population createPermutations(ArrayList<City> cityList, long permutationsNumber) {
-        HashSet<Tour> tours = new HashSet<>();
+    public Map<Tour, Double> splitMap(Map<Tour, Double> tours, long lowerLimit, long upperLimit){
+        Map<Tour, Double> splittedMap = new HashMap<Tour,Double>();
         long counter=0;
-        while(counter < permutationsNumber) {
-            Tour newTour = generateTour(cityList);
-            if (tours.add(newTour)) {
-                counter++;
+        for (Tour tour:tours.keySet()){
+            if(counter>=lowerLimit && counter<upperLimit){
+                splittedMap.put(tour, tour.getFitness());
+            }
+            counter++;
+        }
+        return splittedMap;
+    }
+
+    public double getFitnessAll(Map<Tour, Double> tours){
+        Map<Tour, Double> sortedTours = sortByComparator(tours);
+        Map.Entry<Tour, Double> entry = sortedTours.entrySet().iterator().next();
+        Double value=entry.getValue();
+        return value;
+    }
+
+    public double getFitnessTop25(Map<Tour, Double> tours){
+        long quarterSize = tours.size()/4;
+        Map <Tour, Double> newMap = splitMap(tours, 0, quarterSize);
+        Map<Tour, Double> sortedTours = sortByComparator(newMap);
+        Map.Entry<Tour, Double> entry = sortedTours.entrySet().iterator().next();
+        Double value=entry.getValue();
+        return value;
+    }
+
+    public double getFitnessMid50(Map<Tour, Double> tours){
+        long quarterSize = tours.size()/4;
+        Map <Tour, Double> newMap = splitMap(tours, quarterSize, quarterSize*3);
+        Map<Tour, Double> sortedTours = sortByComparator(newMap);
+        Map.Entry<Tour, Double> entry = sortedTours.entrySet().iterator().next();
+        Double value=entry.getValue();
+        return value;
+    }
+
+    public double getFitnessLast25(Map<Tour, Double> tours){
+        long quarterSize = tours.size()/4;
+        Map <Tour, Double> newMap = splitMap(tours, quarterSize*3, tours.size());
+        Map<Tour, Double> sortedTours = sortByComparator(newMap);
+        Map.Entry<Tour, Double> entry = sortedTours.entrySet().iterator().next();
+        Double value=entry.getValue();
+        return value;
+    }
+
+    public Map<Tour, Double> createPermutationEvaluate(long permutationsNumber) {
+        Map<Tour, Double> tours = new LinkedHashMap<>();
+        long counter = 0;
+        do {
+            Tour newTour = generateTourPermutation();
+            double fitnessValue;
+            fitnessValue = newTour.getFitness();
+            tours.put(newTour, fitnessValue);
+            counter++;
+        } while (counter < permutationsNumber);
+        return tours;
+    }
+
+    public Tour generateTourPermutation() {
+        int random;
+        Tour newTour = new Tour();
+        HashSet<City> cityArrayList = new HashSet<>();
+        ArrayList<City> tempList = new ArrayList<>();
+        City tempCity;
+        for (int i = 0; i < 280; i++) {
+            do {
+                double x = mtwister.nextInt(0, 279);
+                double y = mtwister.nextInt(0, 279);
+                tempCity = new City(i, x, y);
+            } while (!cityArrayList.add(tempCity));
+        }
+        for (City city:cityArrayList){
+            tempList.add(city);
+        }
+
+        do{
+            random = mtwister.nextInt(tempList.size());
+            if(random>Math.round(tempList.size()/2)){
+                newTour.addCity(tempList.get(random));
+                tempList.remove(random);
+            }
+            if(tempList.size()==2){
+                newTour.addCity(tempList.get(1));
+                newTour.addCity(tempList.get(0));
             }
         }
-        ArrayList<Tour> PopulationTours = new ArrayList<>(tours);
-
-        this.population.setTours(PopulationTours);
-
-        return this.population;
-    }
-
-    public Tour generateTour(ArrayList<City> cityArrayList){
-
-        Tour newTour=new Tour();
-        HashSet<Tour> cityListClone=new HashSet<>();
-
-        int random=0;
-
-        for(int i=0;i<cityArrayList.size();i++) {
-            do {
-                random = mtwister.nextInt(0, cityArrayList.size()-1);
-            } while (newTour.containsCity(cityArrayList.get(random)));
-            newTour.addCity(cityArrayList.get(random));
-        }
-
+        while(newTour.getSize()<280);
         return newTour;
     }
 
-
-    public int getPopulationSizeQuarter(){
-        ArrayList<Tour> populationTours=population.getTours();
-
-        return populationTours.size()/4;
-    }
-
-    public double getFitnessTop25(){
-        double bestResult=1000000;
-
-        ArrayList<Tour> populationTours=population.getTours();
-        int quarter=getPopulationSizeQuarter();
-        for(int i=0;i<quarter;i++){
-            Tour tour=populationTours.get(i);
-            if(tour.getFitness()< bestResult){
-                bestResult = tour.getFitness();
+    private static Map<Tour, Double> sortByComparator(Map<Tour, Double> unsortMap){
+        List<Entry<Tour, Double>> list = new LinkedList<Entry<Tour, Double>>(unsortMap.entrySet());
+        Collections.sort(list, new Comparator<Entry<Tour, Double>>()
+        {
+            public int compare(Entry<Tour, Double> entry1, Entry<Tour, Double> entry2)
+            {
+                return entry1.getValue().compareTo(entry2.getValue());
             }
+        });
+
+        Map<Tour, Double> sortedMap = new LinkedHashMap<Tour, Double>();
+        for (Entry<Tour, Double> entry : list) {
+            sortedMap.put(entry.getKey(), entry.getValue());
         }
 
-
-        return bestResult;
-    }
-
-    public double getFitnessLast25(){
-        double bestResult=10000;
-
-        ArrayList<Tour> populationTours=population.getTours();
-        int quarter=getPopulationSizeQuarter();
-
-        for(Tour tour:populationTours){
-            int counter=quarter*3;
-            while(counter<populationTours.size()){
-                if(tour.getFitness()< bestResult){
-                    bestResult = tour.getFitness();
-                }
-                counter++;
-            }
-        }
-
-        return bestResult;
-    }
-
-    public double getFitnessMid50(){
-        double bestResult=100000;
-
-        ArrayList<Tour> populationTours=population.getTours();
-        int quarter=getPopulationSizeQuarter();
-
-        for(Tour tour:populationTours){
-            int counter=quarter;
-            while(counter<populationTours.size()-quarter){
-                if(tour.getFitness()< bestResult){
-                    bestResult = tour.getFitness();
-                }
-                counter++;
-            }
-        }
-
-        return bestResult;
-    }
-
-    public double getFitnessAll(Population population) {
-        double bestResult = 100000;
-
-        ArrayList<Tour> populationTours = population.getTours();
-
-        for (Tour tour : populationTours) {
-            if(tour.getFitness()< bestResult){
-                bestResult = tour.getFitness();
-            }
-        }
-
-        return bestResult;
+        return sortedMap;
     }
 
 
 
-    public void evaluateFitness(){
+    public void evaluateFitness(long permutationNumber){
         Scanner scan = new Scanner(System.in);
         System.out.println("Choose your evaluation option:      ");
-        System.out.println("1. Get Best of Top 25% Percentile Fitnessdata");
-        System.out.println("2. Get Best of  Last 25% Percentile Fitnessdata ");
-        System.out.println("3. Get Best of  Mid-50% Percentile Fitnessdata");
-        System.out.println("4. Get Best of All Fitnessdata");
+        System.out.println("1. Get Best of  Top 25% Percentile  Permutations");
+        System.out.println("2. Get Best of  Mid-50% Percentile Permutations");
+        System.out.println("3. Get Best of  Last 25% Percentile  Permutations");
+        System.out.println("4. Get Best of  All                 Permutations");
+        System.out.println("exit : Exit loop");
         String option = scan.nextLine();
-
-        switch (option){
-            case "1":
-                System.out.println("Top 25% Percentile Fitness: "+getFitnessTop25());
-                break;
-            case "2":
-                System.out.println("Last 25% Percentile Fitness "+getFitnessLast25());
-                break;
-            case "3":
-                System.out.println("Mid-50% Percentile Fitness "+getFitnessMid50());
-                break;
-            case "4":
-                System.out.println("Fitness data All:  "+ getFitnessAll(population));
-                break;
-            default:
-                System.out.println("Wrong Option");
-        }
+        Map<Tour, Double> tours = createPermutationEvaluate(permutationNumber);
+        boolean exit=false;
+        while (!exit)
+            switch (option){
+                case "1":
+                    System.out.println("Best of Top 25% Percentile Fitness: data this Permutations "+getFitnessTop25(tours));
+                    option = scan.nextLine();
+                    break;
+                case "2":
+                    System.out.println("Best of Mid-50% Percentile Fitness data this Permutations "+getFitnessMid50(tours));
+                    option = scan.nextLine();
+                    break;
+                case "3":
+                    System.out.println("Best of Last 25% Percentile Fitness data this Permutations "+getFitnessLast25(tours));
+                    option = scan.nextLine();
+                    break;
+                case "4":
+                    System.out.println("Best of All Fitness data this Permutations : "+ getFitnessAll(tours));
+                    option = scan.nextLine();
+                    break;
+                case "exit":
+                    exit=true;
+                    break;
+                default:
+                    System.out.println("Wrong Option");
+                    option = scan.nextLine();
+            }
     }
 
     public static void main (String args[]){
         BruteForce bruteForce=new BruteForce();
-        Population population=new Population();
-        ArrayList<City> availableCities;
-        InstanceReader instanceReader = new InstanceReader(Configuration.instance.dataFilePath);
-        instanceReader.open();
-        TSPLIBReader tspLibReader = new TSPLIBReader(instanceReader);
-        availableCities = tspLibReader.getCities();
-        Scenario scenario=new Scenario();
-        long permutationsNumber = scenario.getMaximumNumberOfEvaluations();
-        population=bruteForce.createPermutations(availableCities,permutationsNumber);
-        System.out.println(bruteForce.getFitnessAll(population));
+        bruteForce.evaluateFitness(100);
     }
 }
