@@ -25,6 +25,7 @@ public class ExchangeMutation {
         }
         tours = new ArrayList<>();
         tours.add(tour);
+        mutationRatio = 1.0;
     }
 
     @Test

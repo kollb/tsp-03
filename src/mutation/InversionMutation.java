@@ -17,8 +17,8 @@ public class InversionMutation implements IMutation {
         for (Tour tour : tours) {
             if (randomGenerator.nextBoolean(mutationRatio)) {
                 int arrayLength = tour.getSize();
-                int random1 = randomGenerator.nextInt(0, arrayLength);
-                int random2 = randomGenerator.nextInt(0, arrayLength);
+                int random1 = randomGenerator.nextInt(arrayLength);
+                int random2 = randomGenerator.nextInt(arrayLength);
                 int small = Math.min(random1, random2);
                 int large = Math.max(random1, random2);
                 ArrayList<City> tourTemp = new ArrayList<>();
@@ -34,7 +34,6 @@ public class InversionMutation implements IMutation {
                     tour.addCity(start, aTourTemp);
                     start++;
                 }
-                System.out.println(tour.getCities().toString());
             }
         }
 

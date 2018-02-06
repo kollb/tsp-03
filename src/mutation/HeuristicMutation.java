@@ -12,11 +12,15 @@ public class HeuristicMutation implements IMutation {
     public ArrayList<Tour> doMutation(ArrayList<Tour> tours, double mutationRatio) {
         MersenneTwisterFast randomGenerator = (MersenneTwisterFast) Configuration.instance.random;
 
-        for (Tour tour : tours) {
+        for (int index = 0; index < tours.size(); index++) {
             if (randomGenerator.nextBoolean(mutationRatio)) {
-                ArrayList<City> cities = tour.getCities();
-                int lambda = randomGenerator.nextInt(10) + 1;               //TODO check if n = 10 is an appropriate value
+                ArrayList<City> cities = tours.get(index).getCities();
+                int lambda = randomGenerator.nextInt(2,8);               //TODO check if n = 8 is an appropriate value
+                int numberOfPermutations = 1;
+                for(int i = 1; i <= lambda; i++)
+                    numberOfPermutations *= i;
                 ArrayList<Integer> allNumbers = new ArrayList<>();
+                allNumbers.ensureCapacity(cities.size());
                 for (int i = 0; i < cities.size(); i++) {
                     allNumbers.add(i);
                 }
@@ -31,22 +35,24 @@ public class HeuristicMutation implements IMutation {
                 ArrayList<ArrayList<City>> permutations = permutation(targets);
 
                 ArrayList<Tour> possibleTours = new ArrayList<>();
+                possibleTours.ensureCapacity(numberOfPermutations);
 
-                for (ArrayList<City> onePermutation : permutations) {
-                    for (Integer position : positions) {
-                        cities.set(position, onePermutation.remove(0));
+                permutations.parallelStream().forEach(onePermutation ->{
+                    ArrayList<City> citiesPermutation = new ArrayList<>();
+                    citiesPermutation.addAll(cities);
+                    for (int i = 0; i < lambda; i++) {
+                        citiesPermutation.set(positions.get(i), onePermutation.remove(0));
                     }
                     Tour oneTour = new Tour();
-                    oneTour.setCities(cities);
+                    oneTour.setCities(citiesPermutation);
                     possibleTours.add(oneTour);
-                }
+                });
 
-                double minimumDistance = tour.getFitness();
+                double minimumDistance = tours.get(index).getFitness();
                 for (Tour eachTour : possibleTours) {
                     if (eachTour.getFitness() <= minimumDistance) {
                         minimumDistance = eachTour.getFitness();
-                        // TODO: IntelliJ sagt, dass tour nie benutzt wird? Hmm...
-                        tour = eachTour;
+                        tours.get(index).setCities(eachTour.getCities());
                     }
                 }
             }
