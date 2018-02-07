@@ -192,6 +192,8 @@ public class Application {
 
                 } catch (PopulationTooSmallException e) {
                     e.printStackTrace();
+                    System.out.println("Leaving the scenario due to the population size being too small. Make sure a big-enough population is handed over, or lower the Select Count settings.");
+                    break;
                 }
                 if (iterationsCounter == iterationsMax) {
                     long endTime = System.currentTimeMillis();
