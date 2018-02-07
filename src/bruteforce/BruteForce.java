@@ -107,13 +107,7 @@ public class BruteForce {
 
     private static Map<Tour, Double> sortByComparator(Map<Tour, Double> unsortMap){
         List<Entry<Tour, Double>> list = new LinkedList<Entry<Tour, Double>>(unsortMap.entrySet());
-        Collections.sort(list, new Comparator<Entry<Tour, Double>>()
-        {
-            public int compare(Entry<Tour, Double> entry1, Entry<Tour, Double> entry2)
-            {
-                return entry1.getValue().compareTo(entry2.getValue());
-            }
-        });
+        list.sort(Comparator.comparing(Entry::getValue));
 
         Map<Tour, Double> sortedMap = new LinkedHashMap<Tour, Double>();
         for (Entry<Tour, Double> entry : list) {
