@@ -25,8 +25,7 @@ public class Application {
     private static ArrayList<City> availableCities;
     private double[][] distances;
     private MersenneTwisterFast mtwister;
-    private double lastResult;
-
+    private double lastResult=0;
     private ISelection selection;
     private ICrossover crossover;
     private IMutation mutation;
@@ -60,6 +59,7 @@ public class Application {
         System.out.println("availableCities (size) : " + availableCities.size());
 
         distances = tspLibReader.getDistances();
+        //printMatrix(distances);
 
         instanceReader.close();
 
@@ -85,11 +85,12 @@ public class Application {
         return scenarios;
     }
 
-    public void execute(Scenario[] scenarios, Population population) {
+    public void execute(Scenario[] scenarios) {
         int iterationsMax = Configuration.instance.iterationsMaximum;
         double bruteForceResult=0;
         for (Scenario scenario : scenarios) {
-
+            long populationStartSize = Long.parseUnsignedLong("100");
+            Population population = createPopulation(availableCities, populationStartSize);
             switch (scenario.getSelection()) {
                 case TOURNAMENT:
                     selection = new TournamentSelection();
@@ -148,12 +149,14 @@ public class Application {
             double bestResult = 80000;
             int iterationsCounter=1;
             if(scenario.getIsEvaluated()){
-                long permutationsNumber = scenario.getMaximumNumberOfEvaluations();
+                //  long permutationsNumber = scenario.getMaximumNumberOfEvaluations();
+                long permutationsNumber = Long.parseUnsignedLong("100");
                 bruteForceResult = bruteForceResult(permutationsNumber);
             }
+            int sameResultCounter=0;
 
             do {
-                double result;
+                double result = 0;
                 ArrayList<Tour> newPopulation;
                 ArrayList<Tour> parents;
 
@@ -178,8 +181,17 @@ public class Application {
                     if (result < bestResult) {
                         bestResult = result;
                     }
+
                     HSQLDBManager.instance.addFitnessToScenario(scenario.getId(), iterationsCounter, result);
-                    lastResult = result;
+
+                    if(lastResult==result){
+                        sameResultCounter++;
+                    }
+                    else{
+                        sameResultCounter=0;
+                    }
+                    lastResult=result;
+
                     if (iterationsCounter == 1) {
                         System.out.println("Iteration: " + iterationsCounter + " Starting with value: " + Math.round(result));
                     }
@@ -192,20 +204,15 @@ public class Application {
 
                 } catch (PopulationTooSmallException e) {
                     e.printStackTrace();
-                    System.out.println("Leaving the scenario due to the population size being too small. Make sure a big-enough population is handed over, or lower the Select Count settings.");
-                    break;
                 }
                 if (iterationsCounter == iterationsMax) {
                     long endTime = System.currentTimeMillis();
                     System.out.println("Runtime " + (endTime - startTime) / 1000 + " Seconds");
                 }
                 iterationsCounter++;
-
-            } while (!isSolutionQualityReached(bestResult) && iterationsCounter <= iterationsMax);
-
-            if(scenario.isEvaluated()) {
-                System.out.println("BruteForce Best Result : " + Math.round(bruteForceResult) + " Algorithm Best Result : " + Math.round(bestResult));
-            }
+                if(sameResultCounter>=Configuration.instance.abortScenarioNumber) System.out.println("The Fitness Value hasn't changed for the "+sameResultCounter+"th time, this Scenario has been stopped.");
+            } while (!isSolutionQualityReached(bestResult) && iterationsCounter <= iterationsMax && sameResultCounter<Configuration.instance.abortScenarioNumber);
+            System.out.println("BruteForce Best Result : "+Math.round(bruteForceResult)+" Algorithm Best Result : "+Math.round(bestResult));
         }
     }
 
@@ -276,14 +283,11 @@ public class Application {
     }
 
     public static void main(String... args) {
-        // ! STILL TO CHANGE TO 100 ! //
-        long populationStartSize = Long.parseUnsignedLong("50");
         Application application = new Application();
         application.startupHSQLDB();
         application.loadData();
-        Population population = application.createPopulation(availableCities, populationStartSize);
         Scenario[] scenarios = application.initConfiguration();
-        application.execute(scenarios, population);
+        application.execute(scenarios);
         application.shutdownHSQLDB();
     }
 }
