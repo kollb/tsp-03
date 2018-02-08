@@ -212,7 +212,9 @@ public class Application {
                 iterationsCounter++;
                 if(sameResultCounter>=Configuration.instance.abortScenarioNumber) System.out.println("The Fitness Value hasn't changed for the "+sameResultCounter+"th time, this Scenario has been stopped.");
             } while (!isSolutionQualityReached(bestResult) && iterationsCounter <= iterationsMax && sameResultCounter<Configuration.instance.abortScenarioNumber);
-            System.out.println("BruteForce Best Result : "+Math.round(bruteForceResult)+" Algorithm Best Result : "+Math.round(bestResult));
+            if(scenario.isEvaluated()) {
+                System.out.println("BruteForce Best Result : " + Math.round(bruteForceResult) + " Algorithm Best Result : " + Math.round(bestResult));
+            }
         }
     }
 
