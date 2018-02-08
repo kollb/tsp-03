@@ -2,9 +2,6 @@ package test.selection;
 
 import java.util.Random;
 
-/**
- * Created by npor1112 on 25.01.2018.
- */
 public class PseudoRandom extends Random {
     private int[] intArr = {0};
     private double[] doubleArr = {0};

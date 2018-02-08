@@ -18,13 +18,14 @@ import selection.TournamentSelection;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Map;
 
 public class Application {
     private static ArrayList<City> availableCities;
     private double[][] distances;
-
-    private double lastResult;
-
+    private MersenneTwisterFast mtwister;
+    private double lastResult=0;
     private ISelection selection;
     private ICrossover crossover;
     private IMutation mutation;
@@ -84,11 +85,12 @@ public class Application {
         return scenarios;
     }
 
-    public void execute(Scenario[] scenarios, Population population) {
+    public void execute(Scenario[] scenarios) {
         int iterationsMax = Configuration.instance.iterationsMaximum;
-
+        double bruteForceResult=0;
         for (Scenario scenario : scenarios) {
-
+            long populationStartSize = Long.parseUnsignedLong("100");
+            Population population = createPopulation(availableCities, populationStartSize);
             switch (scenario.getSelection()) {
                 case TOURNAMENT:
                     selection = new TournamentSelection();
@@ -146,65 +148,73 @@ public class Application {
             long startTime = System.currentTimeMillis();
             double bestResult = 80000;
             int iterationsCounter=1;
-            double bruteForceResult=0;
             if(scenario.getIsEvaluated()){
-                long permutationsNumber = Long.parseUnsignedLong("400000");
+                //  long permutationsNumber = scenario.getMaximumNumberOfEvaluations();
+                long permutationsNumber = Long.parseUnsignedLong("100");
                 bruteForceResult = bruteForceResult(permutationsNumber);
             }
+            int sameResultCounter=0;
 
-                do {
-                    double result = 0;
-                    ArrayList<Tour> newPopulation;
-                    ArrayList<Tour> parents;
+            do {
+                double result = 0;
+                ArrayList<Tour> newPopulation;
+                ArrayList<Tour> parents;
 
-                    newPopulation = population.getTours();
-                    try {
-                        parents = selection.doSelection(population);
-                        MersenneTwisterFast mtwister=(MersenneTwisterFast) Configuration.instance.random;
-                        if(mtwister.nextBoolean(scenario.getCrossoverRatio())){
-                            for (int j = 1; j < 26; j = j + 2) {
-                                Tour child1 = crossover.doCrossover(parents.get(j), parents.get(j - 1));
-                                Tour child2 = crossover.doCrossover(parents.get(j), parents.get(j - 1));
-                                newPopulation.add(child1);
-                                newPopulation.add(child2);
-                            }
+                newPopulation = population.getTours();
+                try {
+                    parents = selection.doSelection(population);
+                    mtwister=(MersenneTwisterFast) Configuration.instance.random;
+                    if(mtwister.nextBoolean(scenario.getCrossoverRatio())){
+                        for (int j = 1; j < 26; j = j + 2) {
+                            Tour child1 = crossover.doCrossover(parents.get(j), parents.get(j - 1));
+                            Tour child2 = crossover.doCrossover(parents.get(j), parents.get(j - 1));
+                            newPopulation.add(child1);
+                            newPopulation.add(child2);
                         }
+                    }
 
-                        newPopulation = mutation.doMutation(newPopulation, scenario.getMutationRatio());
+                    newPopulation = mutation.doMutation(newPopulation, scenario.getMutationRatio());
 
-                        population.setTours(newPopulation);
-                        result = this.getBestResult(population);
+                    population.setTours(newPopulation);
+                    result = this.getBestResult(population);
 
-                        if (result < bestResult) {
-                            bestResult = result;
-                        }
-                        HSQLDBManager.instance.addFitnessToScenario(scenario.getId(), iterationsCounter, result);
-/*                    if (i == 750) {
-                        HSQLDBManager.instance.checkTable(i);
-                    }*/
-                        lastResult = result;
-                        if (iterationsCounter == 1) {
-                            System.out.println("Iteration: " + iterationsCounter + " Starting with value: " + Math.round(result));
-                        }
-                        if (iterationsCounter % (iterationsMax/4) == 0) {
-                            System.out.println("Iteration: " + iterationsCounter + " Best value: " + Math.round(bestResult) + " Population Size: " + newPopulation.size());
-                        }
-                        if (iterationsCounter == iterationsMax) {
-                            HSQLDBManager.instance.writeCsv(scenario.getId(), iterationsCounter);
-                        }
+                    if (result < bestResult) {
+                        bestResult = result;
+                    }
 
-                    } catch (PopulationTooSmallException e) {
-                        e.printStackTrace();
+                    HSQLDBManager.instance.addFitnessToScenario(scenario.getId(), iterationsCounter, result);
+
+                    if(lastResult==result){
+                        sameResultCounter++;
+                    }
+                    else{
+                        sameResultCounter=0;
+                    }
+                    lastResult=result;
+
+                    if (iterationsCounter == 1) {
+                        System.out.println("Iteration: " + iterationsCounter + " Starting with value: " + Math.round(result));
+                    }
+                    if (iterationsCounter % (iterationsMax/4) == 0) {
+                        System.out.println("Iteration: " + iterationsCounter + " Best value: " + Math.round(bestResult) + " Population Size: " + newPopulation.size());
                     }
                     if (iterationsCounter == iterationsMax) {
-                        long endTime = System.currentTimeMillis();
-                        System.out.println("Runtime " + (endTime - startTime) / 1000 + " Seconds");
+                        HSQLDBManager.instance.writeCsv(scenario.getId(), iterationsCounter);
                     }
-                    iterationsCounter++;
 
-                } while (!isSolutionQualityReached(bestResult) && iterationsCounter <= iterationsMax);
-                System.out.println("BruteForce Best Result : "+Math.round(bruteForceResult)+" Algorithm Best Result "+Math.round(bestResult));
-
+                } catch (PopulationTooSmallException e) {
+                    e.printStackTrace();
+                }
+                if (iterationsCounter == iterationsMax) {
+                    long endTime = System.currentTimeMillis();
+                    System.out.println("Runtime " + (endTime - startTime) / 1000 + " Seconds");
+                }
+                iterationsCounter++;
+                if(sameResultCounter>=Configuration.instance.abortScenarioNumber) System.out.println("The Fitness Value hasn't changed for the "+sameResultCounter+"th time, this Scenario has been stopped.");
+            } while (!isSolutionQualityReached(bestResult) && iterationsCounter <= iterationsMax && sameResultCounter<Configuration.instance.abortScenarioNumber);
+            if(scenario.isEvaluated()) {
+                System.out.println("BruteForce Best Result : " + Math.round(bruteForceResult) + " Algorithm Best Result : " + Math.round(bestResult));
+            }
         }
     }
 
@@ -216,23 +226,6 @@ public class Application {
             }
         }
         return bestResult;
-    }
-
-    public int getWorstResultIndex(Population population){
-        double worstResult=0;
-        int counter=0;
-        for (Tour tour : population.getTours()){
-            if(tour.getFitness()> worstResult) {
-                worstResult = tour.getFitness();
-            }
-        }
-        for(Tour tour : population.getTours()){
-            if(tour.getFitness()==worstResult){
-                return counter;
-            }
-            else counter++;
-        }
-        return 0;
     }
 
     private boolean isSolutionQualityReached(double quality) {
@@ -253,20 +246,50 @@ public class Application {
 
     public double bruteForceResult(long permutationsNumber){
         BruteForce bruteForce = new BruteForce();
-        Population population = bruteForce.createPermutations(availableCities,permutationsNumber);
-        return bruteForce.getFitnessAll(population);
+        Map<Tour, Double> map = bruteForce.createPermutationEvaluate(permutationsNumber);
+        return bruteForce.getFitnessAll(map);
+    }
+
+    public Population createPopulation(ArrayList<City> cityList, long permutationsNumber) {
+        Population population = new Population();
+        HashSet<Tour> tours = new HashSet<>();
+        long counter=0;
+        while(counter < permutationsNumber) {
+            Tour newTour = generateTour(cityList);
+            if (tours.add(newTour)) {
+                counter++;
+            }
+        }
+        ArrayList<Tour> PopulationTours = new ArrayList<>(tours);
+
+        population.setTours(PopulationTours);
+
+        return population;
+    }
+
+    public Tour generateTour(ArrayList<City> cityArrayList){
+
+        Tour newTour=new Tour();
+
+        int random;
+
+        for(int i=0;i<cityArrayList.size();i++) {
+            do {
+                mtwister = new MersenneTwisterFast();
+                random = mtwister.nextInt(0, cityArrayList.size()-1);
+            } while (newTour.containsCity(cityArrayList.get(random)));
+            newTour.addCity(cityArrayList.get(random));
+        }
+
+        return newTour;
     }
 
     public static void main(String... args) {
-        long permutationsNumber = Long.parseUnsignedLong("100");
         Application application = new Application();
         application.startupHSQLDB();
         application.loadData();
-        BruteForce bruteForce = new BruteForce();
-        Population population = bruteForce.createPermutations(availableCities, permutationsNumber);
         Scenario[] scenarios = application.initConfiguration();
-        application.execute(scenarios, population);
-       // bruteForce.evaluateFitness();
+        application.execute(scenarios);
         application.shutdownHSQLDB();
     }
 }

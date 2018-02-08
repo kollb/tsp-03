@@ -106,7 +106,7 @@ public class Scenario {
     }
 
     public void setMaximumNumberOfEvaluations(long maximumNumberOfEvaluations) {
-        this.maximumNumberOfEvaluations = maximumNumberOfEvaluations;
+            this.maximumNumberOfEvaluations = maximumNumberOfEvaluations;
     }
 
     public boolean getIsEvaluated() {

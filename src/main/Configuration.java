@@ -23,5 +23,7 @@ public enum Configuration {
 
     public int iterationsMaximum = 10000;
 
+    public int abortScenarioNumber = 1000;
+
     public Random random = new MersenneTwisterFast();
 }
