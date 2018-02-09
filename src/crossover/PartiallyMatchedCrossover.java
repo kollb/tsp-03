@@ -106,11 +106,11 @@ public class PartiallyMatchedCrossover implements ICrossover{
             return tour02;
         }
         else {
-            int choose = rand.nextInt(2);
+            int choose = rand.nextInt(3);
             switch (choose) {
-                case 0:
-                    return tour01;
                 case 1:
+                    return tour01;
+                case 2:
                     return tour02;
             }
         }
