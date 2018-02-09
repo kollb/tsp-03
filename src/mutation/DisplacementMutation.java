@@ -29,7 +29,11 @@ public class DisplacementMutation implements IMutation {
                 }
                 int insertionPoint;
                 do {
-                    insertionPoint = randomGenerator.nextInt(cities.size());
+                    if (cities.size() == 0) {
+                        insertionPoint = 0;
+                    } else {
+                        insertionPoint = randomGenerator.nextInt(cities.size());
+                    }
                 } while (insertionPoint == startPoint);
                 cities.addAll(insertionPoint, displaced);
 

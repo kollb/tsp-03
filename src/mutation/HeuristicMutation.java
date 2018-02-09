@@ -34,8 +34,7 @@ public class HeuristicMutation implements IMutation {
                 }
                 ArrayList<ArrayList<City>> permutations = permutation(targets);
 
-                ArrayList<Tour> possibleTours = new ArrayList<>();
-                possibleTours.ensureCapacity(numberOfPermutations);
+                ArrayList<Tour> possibleTours = new ArrayList<>(numberOfPermutations);
 
                 permutations.parallelStream().forEach(onePermutation ->{
                     ArrayList<City> citiesPermutation = new ArrayList<>();
