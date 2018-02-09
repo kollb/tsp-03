@@ -59,7 +59,8 @@ public class Application {
         System.out.println("availableCities (size) : " + availableCities.size());
 
         distances = tspLibReader.getDistances();
-        //printMatrix(distances);
+
+        printMatrix(distances);
 
         instanceReader.close();
 
@@ -232,18 +233,6 @@ public class Application {
         return (quality * 0.95) <= 2579;
     }
 
-    public double getFitnessAll(Population population) {
-        double populationFitness = 0;
-
-        ArrayList<Tour> populationTours = population.getTours();
-
-        for (Tour tour : populationTours) {
-            populationFitness = populationFitness + tour.getFitness();
-        }
-
-        return populationFitness;
-    }
-
     public double bruteForceResult(long permutationsNumber){
         BruteForce bruteForce = new BruteForce();
         Map<Tour, Double> map = bruteForce.createPermutationEvaluate(permutationsNumber);
@@ -275,8 +264,7 @@ public class Application {
 
         for(int i=0;i<cityArrayList.size();i++) {
             do {
-                mtwister = new MersenneTwisterFast();
-                random = mtwister.nextInt(0, cityArrayList.size()-1);
+                random = Configuration.instance.random.nextInt(cityArrayList.size());
             } while (newTour.containsCity(cityArrayList.get(random)));
             newTour.addCity(cityArrayList.get(random));
         }
