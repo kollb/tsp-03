@@ -28,13 +28,13 @@ public class DisplacementMutation implements IMutation {
                     displaced.add(cities.remove(startPoint));
                 }
                 int insertionPoint;
-                do {
-                    if (cities.size() == 0) {
-                        insertionPoint = 0;
-                    } else {
+                if (cities.size() == 0) {
+                    insertionPoint = 0;
+                } else {
+                    do {
                         insertionPoint = randomGenerator.nextInt(cities.size());
-                    }
-                } while (insertionPoint == startPoint);
+                    } while (insertionPoint == startPoint);
+                }
                 cities.addAll(insertionPoint, displaced);
 
                 tour.setCities(cities);
