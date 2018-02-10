@@ -28,7 +28,7 @@ public class DisplacementMutation implements IMutation {
                     displaced.add(cities.remove(startPoint));
                 }
                 int insertionPoint;
-                if (cities.size() == 0) {
+                if (cities.size() <= 1) {
                     insertionPoint = 0;
                 } else {
                     do {
