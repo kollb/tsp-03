@@ -156,7 +156,7 @@ public class Statistics implements IStatistics {
                 "getwd()\n\n");
 
         for (int i = 1; i <= scenarios.length; i++) {
-            writer.format("s" + i + " <- as.numeric(read.csv(\"scenario_" + scenarios[i-1] + ".csv\",header=FALSE))\n");
+            writer.format("s" + i + " <- read.csv(\"scenario_" + scenarios[i-1] + ".csv\",header=FALSE)\n");
         }
 
         //writes median
@@ -268,7 +268,7 @@ public class Statistics implements IStatistics {
                     "getwd()\n\n");
             writer.format("pdf(\"plots/barplot_scenario_01.pdf\",height = 10,width = 10,paper = \"A4r\")\n\n");
 
-            for (int i = 0; i < (scenarios.length - 1); i++) {
+            for (int i = 0; i < (scenarios.length); i++) {
                 writer.format( scenarios[i] + " <- c(");
                 for (int j = 0; j < fitness.length; j++) {
                     writer.format("round(" + fitness[fitness.length - 1] + "/" + fitness[j] + ",digits=2)*100,");
@@ -277,7 +277,7 @@ public class Statistics implements IStatistics {
             }
 
             String strScenarios = "";
-            for (int i = 0; i < (scenarios.length - 1); i++) strScenarios = strScenarios + scenarios[i] + ",";
+            for (int i = 0; i < scenarios.length ; i++) strScenarios = strScenarios + scenarios[i] + ",";
             writer.format("barplot(" + strScenarios + "ylim=c(0,100),col=\"black\",ylab = \"solution quality (%%)\",xlab = \"iterations\",width = 0.1,main = \"Genetic Algorithms - TSP280 - Scenario 1\")\n\n");
 
             writer.format("dev.off()");
@@ -297,14 +297,14 @@ public class Statistics implements IStatistics {
                     "setwd(\"" + globalPath + "\")\n" +
                     "getwd()\n\n");
 
-            for (int i = 0; i < (scenarios.length - 1); i++) {
-                writer.format("s" + i + " <- as.numeric(read.csv(\"scenario_" + scenarios[i] + ".csv\",header=FALSE))\n");
+            for (int i = 0; i < (scenarios.length ); i++) {
+                writer.format(scenarios[i] + " <- read.csv(\"scenario_" + scenarios[i] + ".csv\",header=FALSE)\n");
             }
             String count = "";
             String scount = "";
             String sccount = "";
 
-            for (int i = 0; i < (scenarios.length - 1); i++) {
+            for (int i = 0; i < (scenarios.length); i++) {
                 count = count + "_" + scenarios[i];
                 scount = scount + scenarios[i] + ",";
                 sccount = sccount + "\"Scenario " + scenarios[i] + "\",";
@@ -334,14 +334,14 @@ public class Statistics implements IStatistics {
                     "setwd(\"" + globalPath + "\")\n" +
                     "getwd()\n\n");
 
-            for (int i = 0; i < (scenarios.length - 1); i++) {
-                writer.format(scenarios[i] + " <- as.numeric(read.csv(\"scenario_" + scenarios[i] + ".csv\",header=FALSE))\n");
+            for (int i = 0; i < (scenarios.length); i++) {
+                writer.format(scenarios[i] + " <- read.csv(\"scenario_" + scenarios[i] + ".csv\",header=FALSE)\n");
             }
 
             writer.format("\npdf(\"plots/example_scenario01_dotplot.pdf\",height = 10,width = 10,paper = \"A4r\")\n\n");
 
             String strScenarios = "";
-            for (int i = 0; i < (scenarios.length - 1); i++)  strScenarios = strScenarios + scenarios[i] + ",";
+            for (int i = 0; i < (scenarios.length ); i++)  strScenarios = strScenarios + scenarios[i] + ",";
             writer.format("plot(" + strScenarios + "col=\"black\",ylab = \"distance\",xlab = \"iterations\",cex = 0.1,main = \"Genetic Algorithms - TSP280 - Scenario 01\")\n\n");
 
             writer.format("dev.off()");
@@ -361,14 +361,14 @@ public class Statistics implements IStatistics {
                     "setwd(\"" + globalPath + "\")\n" +
                     "getwd()\n\n");
 
-            for (int i = 0; i < (scenarios.length - 1); i++) {
-                writer.format(scenarios[i] + " <- as.numeric(read.csv(\"scenario_" + scenarios[i] + ".csv\",header=FALSE))\n");
+            for (int i = 0; i < (scenarios.length); i++) {
+                writer.format(scenarios[i] + " <- read.csv(\"scenario_" + scenarios[i] + ".csv\",header=FALSE)\n");
             }
 
             writer.format("\npdf(\"plots/example_scenario01_stripchart.pdf\",height = 10,width = 10,paper = \"A4r\")\n\n");
 
             String strScenarios = "";
-            for (int i = 0; i < (scenarios.length - 1); i++)  strScenarios = strScenarios + scenarios[i] + ",";
+            for (int i = 0; i < (scenarios.length); i++)  strScenarios = strScenarios + scenarios[i] + ",";
             writer.format("stripchart(" + strScenarios + "xlim=c(2500,5000),main = \"Genetic Algorithms - TSP280 - Scenario 01\",method=\"stack\")\n\n");
 
             writer.format("dev.off()");
@@ -390,7 +390,7 @@ public class Statistics implements IStatistics {
                     "getwd()\n\n");
 
             for (int i = 0; i < scenarios.length; i++) {
-                writer.format(scenarios[i] + " <- as.numeric(read.csv(\"scenario_" + scenarios[i] + ".csv\",header=FALSE))\n");
+                writer.format(scenarios[i] + " <- read.csv(\"scenario_" + scenarios[i] + ".csv\",header=FALSE)\n");
             }
 
             String strMean = "";
@@ -425,14 +425,14 @@ public class Statistics implements IStatistics {
                     "setwd(\"" + globalPath + "\")\n" +
                     "getwd()\n\n");
 
-            for (int i = 0; i < (scenarios.length - 1); i++) {
-                writer.format(scenarios[i] + " <- as.numeric(read.csv(\"scenario_" + scenarios[i] + ".csv\",header=FALSE))\n");
+            for (int i = 0; i < (scenarios.length); i++) {
+                writer.format(scenarios[i] + " <- read.csv(\"scenario_" + scenarios[i] + ".csv\",header=FALSE)\n");
             }
 
             writer.format("\npdf(\"plots/example_scenario01_histogram.pdf\",height = 10,width = 10,paper = \"A4r\")\n\n");
 
             String strScenarios = "";
-            for (int i = 0; i < (scenarios.length - 1); i++)  strScenarios = strScenarios + scenarios[i] + ",";
+            for (int i = 0; i < (scenarios.length); i++)  strScenarios = strScenarios + scenarios[i] + ",";
             writer.format("hist(" + strScenarios + "xlim=c(2500,5000),ylim=c(0,200),xlab = \"distance\",breaks=100,main = \"Genetic Algorithms - TSP280\")\n\n");
 
             writer.format("dev.off()");
@@ -453,19 +453,19 @@ public class Statistics implements IStatistics {
                     "setwd(\"" + globalPath + "\")\n" +
                     "getwd()\n\n");
 
-            for (int i = 0; i < (scenarios.length - 1); i++) {
-                writer.format(scenarios[i] + " <- as.numeric(read.csv(\"scenario_" + scenarios[i] + ".csv\",header=FALSE))\n");
+            for (int i = 0; i < (scenarios.length); i++) {
+                writer.format(scenarios[i] + " <- read.csv(\"scenario_" + scenarios[i] + ".csv\",header=FALSE)\n");
             }
 
             writer.format("\n# most frequent fitness\n");
-            for (int i = 0; i < (scenarios.length - 1); i++) writer.format("sort(table(" + scenarios[i] + "),decreasing=TRUE)[1]\n");
+            for (int i = 0; i < (scenarios.length); i++) writer.format("sort(table(" + scenarios[i] + "),decreasing=TRUE)[1]\n");
 
             writer.close();
         }
     }
 
 
-    public static void main(String... args) {
+    public static void main(String[] args) {
         Statistics statistics = new Statistics();
         statistics.start(args);
     }
