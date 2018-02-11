@@ -6,7 +6,7 @@ import java.io.*;
 
 public class Statistics implements IStatistics {
 
-    private String globalPath = Configuration.instance.statisticsDirectory;
+    private String globalPath = Configuration.instance.statisticsDirectory.replace("\\", "/");
     private String[] scenarios;
 
     private boolean median = false;
@@ -155,8 +155,8 @@ public class Statistics implements IStatistics {
                 "setwd(\"" + globalPath + "\")\n" +
                 "getwd()\n\n");
 
-        for (int i = 1; i <= scenarios.length; i++) {
-            writer.format("s" + i + " <- read.csv(\"scenario_" + scenarios[i-1] + ".csv\",header=FALSE)\n");
+        for (int i = 0; i < scenarios.length; i++) {
+            writer.format(scenarios[i] + " <- read.csv(\"scenario_" + scenarios[i] + ".csv\",header=FALSE)\n");
         }
 
         //writes median
@@ -465,7 +465,7 @@ public class Statistics implements IStatistics {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String... args) {
         Statistics statistics = new Statistics();
         statistics.start(args);
     }
