@@ -7,7 +7,6 @@
       isEvaluated [ no | yes ]
 	  evaluation [ BruteForce | MonteCarlo ]
 	  maximumNumberOfEvaluations <integer>
-	  <?xml version="1.0"?>
 -->
 
 
